@@ -1,213 +1,344 @@
 /**
- * Main JavaScript File for Portfolio Website
- * Handles Theme Toggling, Sticky Navigation, Mobile Menu, Active Scroll Highlighting
+ * ==========================================================================
+ * MAIN INTERACTION & MOTION CONTROLLER
+ * Md Faijal Eaqbal Portfolio · Cinematic Engineering Edition
+ * Lenis smooth scroll · GSAP choreography · Magnetic cursor · EmailJS pipeline
+ * ==========================================================================
  */
 
 document.addEventListener('DOMContentLoaded', () => {
-  initTheme();
-  initNavbar();
-  initMobileMenu();
-  initScrollObserver();
-  initTypingEffect();
-  initSkillsFilter();
+  initPreloader();
+  initLenisAndGSAP();
+  initCustomCursor();
+  initNavigation();
+  initLiveClock();
+  initScrollChapterSpy();
+  initMotionChoreography();
   initContactForm();
-  init3DTiltEffect();
 });
 
-/* ==========================================================================
-   Theme Handler (Dark / Light Mode)
-   ========================================================================== */
-function initTheme() {
-  const themeToggleBtn = document.getElementById('theme-toggle');
-  const storedTheme = localStorage.getItem('portfolio-theme');
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+/* --------------------------------------------------------------------------
+   01. PRELOADER & BOOT SEQUENCE
+   -------------------------------------------------------------------------- */
+function initPreloader() {
+  const preloader = document.getElementById('preloader');
+  const barFill = document.getElementById('preloader-bar-fill');
+  const pctText = document.getElementById('preloader-percent');
+  if (!preloader) return;
 
-  let currentTheme = storedTheme || (prefersDark ? 'dark' : 'light');
-  document.documentElement.setAttribute('data-theme', currentTheme);
+  let progress = 0;
+  const interval = setInterval(() => {
+    progress += Math.floor(Math.random() * 18) + 12;
+    if (progress > 100) progress = 100;
 
-  if (themeToggleBtn) {
-    themeToggleBtn.addEventListener('click', () => {
-      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      document.documentElement.setAttribute('data-theme', currentTheme);
-      localStorage.setItem('portfolio-theme', currentTheme);
+    if (barFill) barFill.style.width = `${progress}%`;
+    if (pctText) pctText.textContent = `${progress}%`;
+
+    if (progress === 100) {
+      clearInterval(interval);
+      setTimeout(() => {
+        preloader.classList.add('is-loaded');
+        document.body.classList.remove('is-locked');
+      }, 250);
+    }
+  }, 45);
+}
+
+/* --------------------------------------------------------------------------
+   02. LENIS SMOOTH SCROLL & GSAP SYNC
+   -------------------------------------------------------------------------- */
+let lenisInstance = null;
+
+function initLenisAndGSAP() {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+
+  if (typeof Lenis !== 'undefined' && !reduceMotion && !isTouch) {
+    lenisInstance = new Lenis({
+      duration: 1.15,
+      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+      touchMultiplier: 1.5
+    });
+
+    window.__lenis = lenisInstance;
+
+    // Connect Lenis to GSAP ScrollTrigger
+    if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+      gsap.registerPlugin(ScrollTrigger);
+      lenisInstance.on('scroll', ScrollTrigger.update);
+
+      gsap.ticker.add((time) => {
+        lenisInstance.raf(time * 1000);
+      });
+      gsap.ticker.lagSmoothing(0);
+    } else {
+      function raf(time) {
+        lenisInstance.raf(time);
+        requestAnimationFrame(raf);
+      }
+      requestAnimationFrame(raf);
+    }
+  } else if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+  }
+
+  // Smooth anchor scrolling handler
+  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+    anchor.addEventListener('click', (e) => {
+      const targetId = anchor.getAttribute('href');
+      if (targetId === '#') return;
+      const targetEl = document.querySelector(targetId);
+      if (targetEl) {
+        e.preventDefault();
+        if (lenisInstance) {
+          lenisInstance.scrollTo(targetEl, { offset: -60 });
+        } else {
+          targetEl.scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    });
+  });
+}
+
+/* --------------------------------------------------------------------------
+   03. PRECISION CUSTOM CURSOR (Desktop Fine Pointer)
+   -------------------------------------------------------------------------- */
+function initCustomCursor() {
+  const hasFinePointer = window.matchMedia('(pointer: fine)').matches;
+  if (!hasFinePointer) return;
+
+  const dot = document.querySelector('.cursor-dot');
+  const ring = document.querySelector('.cursor-ring');
+  if (!dot || !ring) return;
+
+  let mouseX = -100, mouseY = -100;
+  let ringX = -100, ringY = -100;
+
+  window.addEventListener('pointermove', (e) => {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    dot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+  }, { passive: true });
+
+  // Smooth lerp loop for the trailing precision ring
+  function renderCursor() {
+    ringX += (mouseX - ringX) * 0.18;
+    ringY += (mouseY - ringY) * 0.18;
+    ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
+    requestAnimationFrame(renderCursor);
+  }
+  requestAnimationFrame(renderCursor);
+
+  // Hover states
+  const interactives = document.querySelectorAll('a, button, input, select, textarea, [data-magnetic], .project-dossier, .scope-card');
+  interactives.forEach((el) => {
+    el.addEventListener('mouseenter', () => {
+      document.body.classList.add('cursor-hover');
+    });
+    el.addEventListener('mouseleave', () => {
+      document.body.classList.remove('cursor-hover');
+    });
+  });
+
+  document.addEventListener('mouseleave', () => {
+    dot.style.opacity = '0';
+    ring.style.opacity = '0';
+  });
+  document.addEventListener('mouseenter', () => {
+    dot.style.opacity = '1';
+    ring.style.opacity = '1';
+  });
+}
+
+/* --------------------------------------------------------------------------
+   04. NAVIGATION & MOBILE OVERLAY
+   -------------------------------------------------------------------------- */
+function initNavigation() {
+  const header = document.getElementById('site-header');
+  const toggleBtn = document.getElementById('mobile-nav-toggle');
+  const navMenu = document.getElementById('nav-menu');
+  const progressBar = document.getElementById('scroll-progress-bar');
+
+  // Scroll listener for header blur & progress bar
+  window.addEventListener('scroll', () => {
+    const scrollY = window.scrollY;
+    if (header) {
+      header.classList.toggle('scrolled', scrollY > 24);
+    }
+
+    if (progressBar) {
+      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = maxScroll > 0 ? (scrollY / maxScroll) * 100 : 0;
+      progressBar.style.width = `${pct}%`;
+    }
+  }, { passive: true });
+
+  // Mobile menu toggle
+  if (toggleBtn && navMenu) {
+    const toggleMenu = (open) => {
+      toggleBtn.classList.toggle('is-active', open);
+      navMenu.classList.toggle('is-open', open);
+      toggleBtn.setAttribute('aria-expanded', String(open));
+    };
+
+    toggleBtn.addEventListener('click', () => {
+      const isOpen = navMenu.classList.contains('is-open');
+      toggleMenu(!isOpen);
+    });
+
+    navMenu.querySelectorAll('.nav-item-link').forEach((link) => {
+      link.addEventListener('click', () => toggleMenu(false));
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && navMenu.classList.contains('is-open')) {
+        toggleMenu(false);
+        toggleBtn.focus();
+      }
     });
   }
+
+  // Footer Year
+  const yearEl = document.getElementById('footer-year');
+  if (yearEl) yearEl.textContent = new Date().getFullYear();
 }
 
-/* ==========================================================================
-   Navbar & Sticky Header Scroll Behavior
-   ========================================================================== */
-function initNavbar() {
-  const navbar = document.getElementById('navbar');
-  if (!navbar) return;
+/* --------------------------------------------------------------------------
+   05. LIVE CLOCK — MALDA, INDIA (IST UTC+5:30)
+   -------------------------------------------------------------------------- */
+function initLiveClock() {
+  const clockEl = document.getElementById('live-time-ist');
+  if (!clockEl) return;
 
-  const handleScroll = () => {
-    if (window.scrollY > 20) {
-      navbar.classList.add('scrolled');
-    } else {
-      navbar.classList.remove('scrolled');
-    }
+  function updateTime() {
+    const now = new Date();
+    const options = {
+      timeZone: 'Asia/Kolkata',
+      hour12: false,
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit'
+    };
+    clockEl.textContent = `${new Intl.DateTimeFormat('en-GB', options).format(now)} IST`;
+  }
+
+  updateTime();
+  setInterval(updateTime, 1000);
+}
+
+/* --------------------------------------------------------------------------
+   06. SCROLL CHAPTER SPY
+   -------------------------------------------------------------------------- */
+function initScrollChapterSpy() {
+  const chapters = document.querySelectorAll('section[id]');
+  const chapterIndicator = document.getElementById('current-chapter-text');
+  const navLinks = document.querySelectorAll('.nav-item-link');
+  if (!chapters.length) return;
+
+  const chapterNames = {
+    'home': '01 // OVERVIEW',
+    'about': '02 // PHILOSOPHY',
+    'scope': '03 // SCOPE',
+    'projects': '04 // SELECTED WORK',
+    'stack': '05 // SYSTEM MATRIX',
+    'chronology': '06 // CHRONOLOGY',
+    'contact': '07 // TRANSMISSION'
   };
 
-  window.addEventListener('scroll', handleScroll, { passive: true });
-  handleScroll();
-}
-
-/* ==========================================================================
-   Mobile Navigation Menu Drawer
-   ========================================================================== */
-function initMobileMenu() {
-  const hamburger = document.getElementById('hamburger');
-  const navMenu = document.getElementById('nav-menu');
-  const navLinks = document.querySelectorAll('.nav-link');
-
-  if (!hamburger || !navMenu) return;
-
-  hamburger.addEventListener('click', () => {
-    const isOpen = hamburger.classList.toggle('active');
-    navMenu.classList.toggle('open');
-    hamburger.setAttribute('aria-expanded', isOpen);
-  });
-
-  navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-      hamburger.classList.remove('active');
-      navMenu.classList.remove('open');
-      hamburger.setAttribute('aria-expanded', 'false');
-    });
-  });
-}
-
-/* ==========================================================================
-   Intersection Observer for Section Active Highlighting & Animations
-   ========================================================================== */
-function initScrollObserver() {
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.nav-link');
-  const reveals = document.querySelectorAll('.section, .reveal');
-
-  if (sections.length === 0 || navLinks.length === 0) return;
-
-  const observerOptions = {
-    root: null,
-    rootMargin: '-20% 0px -70% 0px',
-    threshold: 0
-  };
-
-  const navObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
       if (entry.isIntersecting) {
         const id = entry.target.getAttribute('id');
-        navLinks.forEach(link => {
-          if (link.getAttribute('href') === `#${id}`) {
-            link.classList.add('active');
-          } else {
-            link.classList.remove('active');
-          }
+        if (chapterIndicator && chapterNames[id]) {
+          chapterIndicator.textContent = chapterNames[id];
+        }
+        navLinks.forEach((link) => {
+          link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
         });
       }
     });
-  }, observerOptions);
+  }, { rootMargin: '-25% 0px -65% 0px', threshold: 0 });
 
-  sections.forEach(section => navObserver.observe(section));
-
-  /* Reveal animation observer */
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.1 });
-
-  reveals.forEach(el => revealObserver.observe(el));
+  chapters.forEach((chapter) => observer.observe(chapter));
 }
 
-/* ==========================================================================
-   Hero Section Animated Typing Effect
-   ========================================================================== */
-function initTypingEffect() {
-  const typingText = document.getElementById('typing-text');
-  if (!typingText) return;
-
-  const roles = [
-    "BCA Student @ Malda College",
-    "Full-Stack Web Developer",
-    "Bot & Automation Engineer",
-    "Open Source Enthusiast"
-  ];
-
-  let roleIndex = 0;
-  let charIndex = 0;
-  let isDeleting = false;
-  const typeSpeed = 90;
-  const deleteSpeed = 45;
-  const delayNext = 2200;
-
-  function type() {
-    const currentRole = roles[roleIndex];
-
-    if (isDeleting) {
-      typingText.textContent = currentRole.substring(0, charIndex - 1);
-      charIndex--;
-    } else {
-      typingText.textContent = currentRole.substring(0, charIndex + 1);
-      charIndex++;
-    }
-
-    if (!isDeleting && charIndex === currentRole.length) {
-      isDeleting = true;
-      setTimeout(type, delayNext);
-    } else if (isDeleting && charIndex === 0) {
-      isDeleting = false;
-      roleIndex = (roleIndex + 1) % roles.length;
-      setTimeout(type, 500);
-    } else {
-      setTimeout(type, isDeleting ? deleteSpeed : typeSpeed);
-    }
+/* --------------------------------------------------------------------------
+   07. GSAP MOTION & SCROLLTRIGGER REVEALS
+   -------------------------------------------------------------------------- */
+function initMotionChoreography() {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  
+  if (reduceMotion) {
+    document.querySelectorAll('[data-reveal], [data-reveal-group]').forEach((el) => {
+      el.classList.add('is-revealed');
+    });
+    return;
   }
 
-  type();
-}
+  // Hero Opening Entrance (GSAP)
+  if (typeof gsap !== 'undefined') {
+    gsap.timeline({ defaults: { ease: 'power4.out' } })
+      .from('.hero-status-pill', { y: 20, autoAlpha: 0, duration: 0.8 }, 0.2)
+      .from('.hero-title', { y: 35, autoAlpha: 0, duration: 1.1 }, 0.35)
+      .from('.hero-statement', { y: 24, autoAlpha: 0, duration: 0.9 }, 0.5)
+      .from('.hero-cta-group', { y: 20, autoAlpha: 0, duration: 0.8 }, 0.65)
+      .from('.hero-metrics', { y: 20, autoAlpha: 0, duration: 0.9 }, 0.8)
+      .from('.hero-dossier-card', { y: 40, autoAlpha: 0, duration: 1.2 }, 0.5);
+  }
 
-/* ==========================================================================
-   Categorized Skills Filter Tabs
-   ========================================================================== */
-function initSkillsFilter() {
-  const filterTabs = document.querySelectorAll('.filter-tab');
-  const skillCards = document.querySelectorAll('.skill-card');
+  // Robust Section-Level Observer Reveals
+  const revealObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('is-revealed');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  }, { rootMargin: '0px 0px -6% 0px', threshold: 0.05 });
 
-  if (filterTabs.length === 0 || skillCards.length === 0) return;
+  document.querySelectorAll('[data-reveal], [data-reveal-group]').forEach((el) => {
+    revealObserver.observe(el);
+  });
 
-  filterTabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-      filterTabs.forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-
-      const filterValue = tab.getAttribute('data-filter');
-
-      skillCards.forEach(card => {
-        const cardCategory = card.getAttribute('data-category');
-        if (filterValue === 'all' || cardCategory === filterValue) {
-          card.classList.remove('hidden');
-        } else {
-          card.classList.add('hidden');
-        }
+  // Subtle 3D Card Hover Tilt (Desktop Only)
+  const isFinePointer = window.matchMedia('(pointer: fine)').matches;
+  if (isFinePointer && typeof gsap !== 'undefined') {
+    const tiltCards = document.querySelectorAll('.hero-dossier-card, .project-dossier');
+    tiltCards.forEach((card) => {
+      card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+        gsap.to(card, {
+          rotationY: x * 6,
+          rotationX: -y * 5,
+          duration: 0.4,
+          ease: 'power1.out',
+          transformPerspective: 1000
+        });
+      });
+      card.addEventListener('mouseleave', () => {
+        gsap.to(card, {
+          rotationX: 0,
+          rotationY: 0,
+        });
       });
     });
-  });
+  }
 }
 
-/* ==========================================================================
-   Contact Form Validation & EmailJS Client-Side Submission
-   ========================================================================== */
+/* --------------------------------------------------------------------------
+   08. CONTACT TRANSMISSION PIPELINE & EMAILJS SUBMISSION
+   -------------------------------------------------------------------------- */
 function initContactForm() {
   const form = document.getElementById('contact-form');
   if (!form) return;
 
   const nameInput = document.getElementById('contact-name');
   const emailInput = document.getElementById('contact-email');
-  const subjectInput = document.getElementById('contact-subject');
+  const serviceInput = document.getElementById('contact-service');
+  const budgetInput = document.getElementById('contact-budget');
   const messageInput = document.getElementById('contact-message');
   const formStatus = document.getElementById('form-status');
   const submitBtn = document.getElementById('submit-contact-btn');
@@ -218,169 +349,128 @@ function initContactForm() {
 
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const validateInput = (input, errorEl, condition) => {
-    if (!condition) {
-      input.classList.add('invalid');
-      if (errorEl) errorEl.classList.add('visible');
-      return false;
-    } else {
-      input.classList.remove('invalid');
-      if (errorEl) errorEl.classList.remove('visible');
-      return true;
-    }
+  const validate = (input, errorEl, condition) => {
+    if (!input) return condition;
+    input.classList.toggle('invalid', !condition);
+    if (errorEl) errorEl.classList.toggle('visible', !condition);
+    return condition;
   };
 
   if (nameInput) {
     nameInput.addEventListener('input', () => {
-      validateInput(nameInput, nameError, nameInput.value.trim().length >= 2);
+      validate(nameInput, nameError, nameInput.value.trim().length >= 2);
     });
   }
 
   if (emailInput) {
     emailInput.addEventListener('input', () => {
-      validateInput(emailInput, emailError, emailRegex.test(emailInput.value.trim()));
+      validate(emailInput, emailError, emailRegex.test(emailInput.value.trim()));
     });
   }
 
   if (messageInput) {
     messageInput.addEventListener('input', () => {
-      validateInput(messageInput, messageError, messageInput.value.trim().length >= 10);
+      validate(messageInput, messageError, messageInput.value.trim().length >= 10);
     });
   }
 
-  // Auto-initialize EmailJS if public key is configured
-  if (typeof emailjs !== 'undefined' && typeof EMAILJS_CONFIG !== 'undefined' && EMAILJS_CONFIG.PUBLIC_KEY && EMAILJS_CONFIG.PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY') {
+  // Initialize EmailJS when configured
+  if (typeof emailjs !== 'undefined' && typeof EMAILJS_CONFIG !== 'undefined' && EMAILJS_CONFIG.PUBLIC_KEY) {
     try {
       emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
-    } catch (e) {
-      console.warn('EmailJS init warning:', e);
+    } catch (err) {
+      console.warn('[EmailJS] Init warning:', err);
     }
   }
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
-    const isNameValid = validateInput(nameInput, nameError, nameInput.value.trim().length >= 2);
-    const isEmailValid = validateInput(emailInput, emailError, emailRegex.test(emailInput.value.trim()));
-    const isMessageValid = validateInput(messageInput, messageError, messageInput.value.trim().length >= 10);
+    const isNameValid = validate(nameInput, nameError, nameInput.value.trim().length >= 2);
+    const isEmailValid = validate(emailInput, emailError, emailRegex.test(emailInput.value.trim()));
+    const isMessageValid = validate(messageInput, messageError, messageInput.value.trim().length >= 10);
 
     if (!isNameValid || !isEmailValid || !isMessageValid) {
-      formStatus.className = 'form-status error';
-      formStatus.textContent = '⚠️ Please fix the highlighted errors above before submitting.';
+      if (formStatus) {
+        formStatus.className = 'form-status-alert error visible';
+        formStatus.textContent = 'Please correct the highlighted fields before sending.';
+      }
       return;
     }
 
-    // Button Loading State
     const originalBtnHTML = submitBtn ? submitBtn.innerHTML : '';
     if (submitBtn) {
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Sending...';
+      submitBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Transmitting...';
     }
 
-    formStatus.className = 'form-status';
-    formStatus.textContent = '';
+    if (formStatus) {
+      formStatus.className = 'form-status-alert';
+      formStatus.textContent = '';
+    }
 
-    // If EmailJS config credentials are not set yet, fallback gracefully
     const hasCredentials = typeof emailjs !== 'undefined' &&
                            typeof EMAILJS_CONFIG !== 'undefined' &&
                            EMAILJS_CONFIG.SERVICE_ID &&
-                           EMAILJS_CONFIG.SERVICE_ID !== 'YOUR_EMAILJS_SERVICE_ID' &&
-                           EMAILJS_CONFIG.TEMPLATE_ID &&
-                           EMAILJS_CONFIG.TEMPLATE_ID !== 'YOUR_EMAILJS_TEMPLATE_ID';
+                           EMAILJS_CONFIG.TEMPLATE_ID;
 
     if (!hasCredentials) {
-      // Demo fallback while awaiting actual keys from user
       setTimeout(() => {
         if (submitBtn) {
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalBtnHTML;
         }
-        formStatus.className = 'form-status success';
-        formStatus.textContent = '🎉 Thank you! Your message has been sent. (Awaiting EmailJS Keys to deliver directly to faijaleaqbal@gmail.com)';
+        if (formStatus) {
+          formStatus.className = 'form-status-alert success visible';
+          formStatus.textContent = 'Transmission noted. (Demo mode fallback)';
+        }
         form.reset();
-      }, 1000);
+      }, 700);
       return;
     }
 
     try {
       const templateParams = {
-        // Standard EmailJS default template variable names
         name: nameInput.value.trim(),
         email: emailInput.value.trim(),
-        title: subjectInput ? subjectInput.value.trim() || 'Portfolio Inquiry' : 'Portfolio Inquiry',
+        title: 'Engineering Inquiry via Portfolio',
         message: messageInput.value.trim(),
-        
-        // Custom & fallback template variable names
         from_name: nameInput.value.trim(),
         from_email: emailInput.value.trim(),
         reply_to: emailInput.value.trim(),
-        subject: subjectInput ? subjectInput.value.trim() || 'Portfolio Inquiry' : 'Portfolio Inquiry',
+        subject: 'Engineering Inquiry',
         to_name: 'Md Faijal Eaqbal',
-        to_email: 'faijaleaqbal@gmail.com'
+        to_email: 'faijaleaqbal@gmail.com',
+        service: serviceInput ? serviceInput.value || 'General Inquiry' : 'General Inquiry',
+        budget: budgetInput ? budgetInput.value || 'Not specified' : 'Not specified'
       };
 
-      // Send Email via EmailJS
       const response = await emailjs.send(
         EMAILJS_CONFIG.SERVICE_ID,
         EMAILJS_CONFIG.TEMPLATE_ID,
         templateParams
       );
 
-      console.log('EmailJS API Success Response:', response);
-
-      // Verify exact 200 OK status from EmailJS API
       if (response && (response.status === 200 || response.text === 'OK')) {
-        formStatus.className = 'form-status success';
-        formStatus.textContent = '🎉 Thank you! Your message has been sent successfully to Md Faijal Eaqbal.';
+        if (formStatus) {
+          formStatus.className = 'form-status-alert success visible';
+          formStatus.textContent = 'Transmission successful — direct email dispatched to faijaleaqbal@gmail.com. Response within 6 hours.';
+        }
         form.reset();
       } else {
-        throw new Error(`EmailJS returned status ${response ? response.status : 'unknown'}: ${response ? response.text : ''}`);
+        throw new Error(`EmailJS status ${response ? response.status : 'error'}`);
       }
-
     } catch (err) {
-      console.error('EmailJS Submission Error:', err);
-      formStatus.className = 'form-status error';
-      formStatus.textContent = `❌ Failed to send email (${err.text || err.message || 'Network Error'}). Please try again or email directly at faijaleaqbal@gmail.com.`;
+      console.error('[EmailJS] Transmission error:', err);
+      if (formStatus) {
+        formStatus.className = 'form-status-alert error visible';
+        formStatus.innerHTML = `Transmission could not complete automatically. Please write directly to <a href="mailto:faijaleaqbal@gmail.com" style="text-decoration:underline;color:#fff;">faijaleaqbal@gmail.com</a>.`;
+      }
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.innerHTML = originalBtnHTML;
       }
     }
-  });
-}
-
-/* ==========================================================================
-   3D Tilt & Spatial Holographic Card Micro-Interactions
-   ========================================================================== */
-function init3DTiltEffect() {
-  // Only activate 3D tilt tracking on pointer/mouse devices
-  if (window.matchMedia('(pointer: coarse)').matches) return;
-
-  const tiltCards = document.querySelectorAll('.project-card, .skill-card, .hero-card-glass, .contact-card, .stat-card, .cert-card, .testimonial-card');
-
-  tiltCards.forEach(card => {
-    card.classList.add('tilt-card');
-
-    card.addEventListener('mousemove', (e) => {
-      const rect = card.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-
-      const centerX = rect.width / 2;
-      const centerY = rect.height / 2;
-
-      // Max 10deg tilt for smooth subtle depth
-      const rotateX = ((y - centerY) / centerY) * -10;
-      const rotateY = ((x - centerX) / centerX) * 10;
-
-      card.style.transform = `perspective(1000px) rotateX(${rotateX.toFixed(2)}deg) rotateY(${rotateY.toFixed(2)}deg) translateZ(8px)`;
-      card.style.setProperty('--glare-x', `${((x / rect.width) * 100).toFixed(1)}%`);
-      card.style.setProperty('--glare-y', `${((y / rect.height) * 100).toFixed(1)}%`);
-    });
-
-    card.addEventListener('mouseleave', () => {
-      card.style.transform = 'perspective(1000px) rotateX(0deg) rotateY(0deg) translateZ(0px)';
-    });
   });
 }

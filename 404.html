@@ -1,110 +1,140 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  
-  <!-- Primary Meta Tags -->
-  <title>404 — Page Not Found | Md Faijal Eaqbal Portfolio</title>
-  <meta name="robots" content="noindex, follow">
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 
-  <!-- Google Fonts -->
+  <title>404 — Coordinate Not Found | Md Faijal Eaqbal</title>
+  <meta name="robots" content="noindex, follow">
+  <meta name="theme-color" content="#050608">
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%236377ff'/%3E%3Cstop offset='1' stop-color='%238e78ff'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='100' height='100' rx='20' fill='%23050608'/%3E%3Ctext x='50' y='70' font-size='60' font-family='monospace' font-weight='800' text-anchor='middle' fill='url(%23g)'%3EF%3C/text%3E%3C/svg%3E">
+
+  <!-- Typography -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&family=Outfit:wght@600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Font Awesome Icons -->
+  <!-- Font Awesome 6.5.1 Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  <!-- Stylesheet -->
-  <link rel="stylesheet" href="styles/main.css">
+  <!-- Shared Design Tokens & Stylesheet -->
+  <link rel="stylesheet" href="styles/main.css?v=20260904_cinematic">
 
   <style>
-    .error-page-wrapper {
-      min-height: 100vh;
+    .error-viewport {
+      min-height: 100svh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
       text-align: center;
-      padding: 2rem 1.5rem;
-      background-color: var(--bg-primary);
-      color: var(--text-primary);
+      padding: 2rem var(--pad-page);
       position: relative;
+      z-index: 10;
     }
 
-    .error-code {
-      font-family: var(--font-heading);
-      font-size: 8rem;
+    .error-code-badge {
+      font-family: var(--font-mono);
+      font-size: var(--fs-micro);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--acc-core);
+      padding: 0.35rem 0.85rem;
+      background: rgba(99, 119, 255, 0.1);
+      border: 1px solid var(--line-accent);
+      border-radius: 99px;
+      margin-bottom: 1.5rem;
+    }
+
+    .error-giant-num {
+      font-family: var(--font-display);
+      font-size: clamp(5rem, 16vw, 9.5rem);
       font-weight: 800;
-      line-height: 1;
-      background: var(--gradient-text);
+      line-height: 0.9;
+      letter-spacing: -0.04em;
+      background: linear-gradient(115deg, var(--ink-primary) 30%, var(--acc-core) 70%, var(--acc-violet) 100%);
       -webkit-background-clip: text;
+      background-clip: text;
       -webkit-text-fill-color: transparent;
       margin-bottom: 1rem;
     }
 
     .error-title {
-      font-family: var(--font-heading);
-      font-size: 2.2rem;
+      font-family: var(--font-display);
+      font-size: clamp(1.4rem, 3.5vw, 2.2rem);
       font-weight: 700;
-      margin-bottom: 1rem;
+      color: var(--ink-primary);
+      margin-bottom: 0.75rem;
     }
 
-    .error-message {
-      font-size: 1.1rem;
-      color: var(--text-secondary);
-      max-width: 540px;
-      margin-bottom: 2.5rem;
-      line-height: 1.6;
-    }
-
-    .error-visual-box {
-      background: var(--bg-surface);
-      border: 1px solid var(--border-color);
-      border-radius: var(--radius-md);
-      padding: 1.5rem;
-      font-family: monospace;
-      font-size: 0.9rem;
-      color: var(--accent-cyan);
+    .error-desc {
+      max-width: 460px;
+      font-size: var(--fs-body);
+      color: var(--ink-secondary);
+      line-height: 1.7;
       margin-bottom: 2rem;
+    }
+
+    .error-console {
+      font-family: var(--font-mono);
+      font-size: 0.82rem;
+      color: var(--ink-secondary);
+      background: var(--bg-plate);
+      border: 1px solid var(--line-hair);
+      border-radius: var(--radius-sm);
+      padding: 1.1rem 1.4rem;
+      margin-bottom: 2.5rem;
       text-align: left;
-      max-width: 480px;
+      max-width: 440px;
       width: 100%;
+    }
+
+    .error-console span.method { color: var(--acc-cyan); font-weight: 600; }
+    .error-console span.status { color: #f87171; font-weight: 600; }
+    .error-console span.dim { color: var(--ink-tertiary); display: block; margin-top: 0.4rem; }
+
+    .error-actions {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
   </style>
 </head>
 <body>
 
-  <div class="error-page-wrapper">
-    <div class="error-code">404</div>
-    <h1 class="error-title">Page Not Found</h1>
-    <p class="error-message">
-      Oops! The page or resource you are looking for doesn't exist, has been removed, or was moved to a new URL.
+  <!-- Textural Overlays -->
+  <div class="grain-overlay" aria-hidden="true"></div>
+  <div class="vignette-overlay" aria-hidden="true"></div>
+
+  <main class="error-viewport container">
+    <div class="error-code-badge">HTTP 404 // COORDINATE UNRESOLVED</div>
+    <div class="error-giant-num" aria-hidden="true">404</div>
+    <h1 class="error-title">Coordinate Out of Range</h1>
+    <p class="error-desc">
+      The resource, path, or route you requested does not exist on this server.
     </p>
 
-    <div class="error-visual-box">
+    <div class="error-console">
       <code>
-        <span style="color: #ef4444;">Error 404</span>: HTTP_NOT_FOUND<br>
-        <span style="color: var(--text-muted);">// Requested URI does not exist on Md Faijal Eaqbal's portfolio server</span>
+        <span class="method">GET</span> requested_path <span class="status">&rarr; 404 NOT_FOUND</span>
+        <span class="dim">// no matching node on faijaleaqbal.duckdns.org</span>
       </code>
     </div>
 
     <div class="error-actions">
-      <a href="index.html" class="btn btn-primary btn-lg">
-        <i class="fa-solid fa-house" aria-hidden="true"></i> Return to Home Page
+      <a href="/" class="btn-primary">
+        <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+        <span>Return to Portfolio</span>
+      </a>
+      <a href="/#projects" class="btn-secondary">
+        <i class="fa-solid fa-layer-group" aria-hidden="true"></i>
+        <span>Selected Work</span>
       </a>
     </div>
-  </div>
+  </main>
 
-  <script>
-    const storedTheme = localStorage.getItem('portfolio-theme');
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    let currentTheme = storedTheme || (prefersDark ? 'dark' : 'light');
-    document.documentElement.setAttribute('data-theme', currentTheme);
-  </script>
 </body>
 </html>
