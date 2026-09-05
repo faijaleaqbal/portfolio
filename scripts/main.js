@@ -754,3 +754,41 @@ document.addEventListener('DOMContentLoaded', () => {
   initProjectTabs();
   initAudioTelemetry();
 });
+
+/* --------------------------------------------------------------------------
+   12. TACTILE 3D BUTTONS PHYSICS & TILT DYNAMICS
+   -------------------------------------------------------------------------- */
+function init3DButtons() {
+  const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
+  if (isTouch) return;
+
+  const buttons = document.querySelectorAll(
+    '.btn-primary, .btn-secondary, .btn-header-cta, .btn-submit-transmission, .dossier-tab-btn, .sound-toggle-btn, .arch-interactive-row, .signal-channel-card, .footer-social-btn'
+  );
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      const normX = (x - centerX) / centerX;
+      const normY = (y - centerY) / centerY;
+
+      const tiltX = -normY * 12;
+      const tiltY = normX * 12;
+
+      btn.style.transform = `perspective(600px) rotateX(${tiltX.toFixed(2)}deg) rotateY(${tiltY.toFixed(2)}deg) translateZ(8px) translateY(-3px)`;
+    });
+
+    btn.addEventListener('mouseleave', () => {
+      btn.style.transform = '';
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  init3DButtons();
+});

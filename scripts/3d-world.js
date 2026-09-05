@@ -51,8 +51,11 @@
   
   // Spatial Groups
   let worldGroup, heroHubGroup, rackCorridorGroup, skillsMatrixGroup;
-  let projectsGroup, archStackGroup;
+  let projectsGroup, archStackGroup, beaconGroup;
   let dataPipelinesGroup, particleSystem;
+  let beaconDishMesh = null;
+  let beaconSignalRings = [];
+  let beaconLaserBeam = null;
 
   // Interactive Architecture Layers
   let archLayerMeshes = [];
@@ -312,6 +315,7 @@
     buildInteractiveArchitectureStack();
     buildDataPipelines();
     buildFloatingDataAtmosphere();
+    buildBottomBeaconArray();
 
     // 7. Event Listeners
     setupEventListeners();
@@ -985,7 +989,148 @@
   }
 
   /* --------------------------------------------------------------------------
-     13. CONTINUOUS SCROLL-DRIVEN CAMERA CHOREOGRAPHY
+     13. BOTTOM SECTION (08 // TRANSMISSION BEACON & DEEP SPACE ANTENNA ARRAY)
+     -------------------------------------------------------------------------- */
+  function buildBottomBeaconArray() {
+    beaconGroup = new THREE.Group();
+    beaconGroup.position.set(0, -116, -170);
+
+    // 1. Tapered Communication Lattice Mast
+    const mastGeom = new THREE.CylinderGeometry(0.4, 2.8, 26, 6, 6, true);
+    const mastMat = new THREE.MeshStandardMaterial({
+      color: C.steel,
+      wireframe: true,
+      metalness: 0.85,
+      roughness: 0.25
+    });
+    const mast = new THREE.Mesh(mastGeom, mastMat);
+    mast.position.y = 10;
+    beaconGroup.add(mast);
+
+    // Mast Base Anchor Pedestal
+    const baseGeom = new THREE.CylinderGeometry(3.6, 4.4, 3.5, 8);
+    const baseMat = new THREE.MeshStandardMaterial({
+      color: C.obsidian,
+      roughness: 0.4,
+      metalness: 0.9
+    });
+    const base = new THREE.Mesh(baseGeom, baseMat);
+    base.position.y = -2;
+    beaconGroup.add(base);
+
+    // 2. Parabolic High-Gain Dish Array
+    const dishGeom = new THREE.SphereGeometry(4.2, 24, 16, 0, Math.PI * 2, 0, Math.PI * 0.35);
+    const dishMat = new THREE.MeshStandardMaterial({
+      color: C.chassis,
+      side: THREE.DoubleSide,
+      metalness: 0.8,
+      roughness: 0.3
+    });
+    beaconDishMesh = new THREE.Mesh(dishGeom, dishMat);
+    beaconDishMesh.rotation.x = -Math.PI * 0.65;
+    beaconDishMesh.position.set(0, 23, 0);
+    beaconGroup.add(beaconDishMesh);
+
+    // Feed Horn & Optical Tip
+    const feedGeom = new THREE.CylinderGeometry(0.12, 0.12, 3.2, 8);
+    const feedMat = new THREE.MeshBasicMaterial({ color: C.cyan });
+    const feed = new THREE.Mesh(feedGeom, feedMat);
+    feed.position.set(0, 0, 1.8);
+    feed.rotation.x = Math.PI / 2;
+    beaconDishMesh.add(feed);
+
+    // Spire Apex Beacon Octahedron
+    const apexGeom = new THREE.OctahedronGeometry(1.2, 0);
+    const apexMat = new THREE.MeshBasicMaterial({
+      color: C.cyan,
+      wireframe: true,
+      transparent: true,
+      opacity: 0.9
+    });
+    const apex = new THREE.Mesh(apexGeom, apexMat);
+    apex.position.set(0, 24.5, 0);
+    beaconGroup.add(apex);
+    rotatingDiscs.push({ mesh: apex, rx: 0.4, ry: 0.6, rz: 0.2 });
+
+    // 3. Vertical Uplink Laser Beam
+    const laserGeom = new THREE.CylinderGeometry(0.15, 0.65, 80, 16, 1, true);
+    const laserMat = new THREE.MeshBasicMaterial({
+      color: C.cyan,
+      transparent: true,
+      opacity: 0.75,
+      blending: THREE.AdditiveBlending,
+      side: THREE.DoubleSide
+    });
+    beaconLaserBeam = new THREE.Mesh(laserGeom, laserMat);
+    beaconLaserBeam.position.set(0, 64.5, 0);
+    beaconGroup.add(beaconLaserBeam);
+
+    // 4. Radiating Holo-Signal Wave Rings (Expanding into atmosphere)
+    for (let r = 0; r < 4; r++) {
+      const ringG = new THREE.RingGeometry(1.5, 1.65, 48);
+      const ringM = new THREE.MeshBasicMaterial({
+        color: r % 2 === 0 ? C.cyan : C.amber,
+        side: THREE.DoubleSide,
+        transparent: true,
+        opacity: 0.8,
+        depthWrite: false
+      });
+      const ring = new THREE.Mesh(ringG, ringM);
+      ring.rotation.x = Math.PI / 2;
+      ring.position.set(0, 24.5, 0);
+      beaconGroup.add(ring);
+      beaconSignalRings.push({
+        mesh: ring,
+        progress: r * 0.25,
+        speed: 0.28
+      });
+    }
+
+    // 5. Contact Terminal Monolith Console (floating on right)
+    const termC = createOffscreenCanvas(512, 320);
+    const tctx = termC.getContext('2d');
+    tctx.fillStyle = '#060a12';
+    tctx.fillRect(0, 0, 512, 320);
+    tctx.strokeStyle = '#38bdf8';
+    tctx.lineWidth = 3;
+    tctx.strokeRect(4, 4, 504, 312);
+    tctx.fillStyle = '#10b981';
+    tctx.font = 'bold 20px "JetBrains Mono", monospace';
+    tctx.fillText('TRANSMISSION BEACON // ONLINE', 24, 42);
+    tctx.fillStyle = '#38bdf8';
+    tctx.font = '14px "JetBrains Mono", monospace';
+    tctx.fillText('ENCRYPTION: TLS 1.3 / E2E VERIFIED', 24, 80);
+    tctx.fillText('TELEGRAM: @xynqr [DIRECT]', 24, 112);
+    tctx.fillText('INBOX: faijaleaqbal@gmail.com', 24, 144);
+    tctx.fillText('LATENCY: 18ms · PING OK', 24, 176);
+    tctx.fillStyle = '#f59e0b';
+    tctx.fillText('> READY FOR INQUIRY DISPATCH', 24, 224);
+    tctx.fillText('> 30-DAY POST LAUNCH SUPPORT', 24, 256);
+
+    const cTex = new THREE.CanvasTexture(termC);
+    const monGeom = new THREE.PlaneGeometry(5.2, 3.2);
+    const monMat = new THREE.MeshBasicMaterial({
+      map: cTex,
+      side: THREE.DoubleSide,
+      transparent: true,
+      opacity: 0.95
+    });
+    const monolith = new THREE.Mesh(monGeom, monMat);
+    monolith.position.set(5.8, 12, 4);
+    monolith.rotation.y = -0.35;
+    beaconGroup.add(monolith);
+
+    // Telemetry Point Light for Beacon
+    const beaconLight = new THREE.PointLight(C.cyan, 5.0, 40, 1.8);
+    beaconLight.position.set(0, 25, 0);
+    beaconGroup.add(beaconLight);
+    pulsingLights.push({ light: beaconLight, baseIntensity: 5.0, speed: 2.8, phase: 0.5 });
+
+    worldGroup.add(beaconGroup);
+  }
+
+  /* --------------------------------------------------------------------------
+     14. CONTINUOUS SCROLL-DRIVEN CAMERA CHOREOGRAPHY
      -------------------------------------------------------------------------- */
   const cameraPath = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, 3.2, 14),        // Hero: wide aerial perspective
@@ -1207,6 +1352,23 @@
 
     if (particleSystem) {
       particleSystem.rotation.y = elapsed * 0.015;
+    }
+
+    // Animate Bottom Beacon
+    if (beaconDishMesh) {
+      beaconDishMesh.rotation.z = Math.sin(elapsed * 0.4) * 0.25;
+      beaconDishMesh.rotation.y = elapsed * 0.15;
+    }
+    if (beaconLaserBeam) {
+      beaconLaserBeam.material.opacity = 0.55 + Math.sin(elapsed * 4.0) * 0.25;
+    }
+    for (let i = 0; i < beaconSignalRings.length; i++) {
+      const sr = beaconSignalRings[i];
+      sr.progress += sr.speed * delta;
+      if (sr.progress > 1) sr.progress -= 1;
+      const s = 1 + sr.progress * 14;
+      sr.mesh.scale.set(s, s, s);
+      sr.mesh.material.opacity = Math.max(0, (1 - sr.progress) * 0.85);
     }
 
     handleRaycasting();
