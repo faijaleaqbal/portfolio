@@ -86,13 +86,16 @@ function initLenisAndGSAP() {
   // Smooth anchor scrolling handler
   document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
     anchor.addEventListener('click', (e) => {
-      const targetId = anchor.getAttribute('href');
+      let targetId = anchor.getAttribute('href');
       if (targetId === '#') return;
+      if (targetId === '#work') targetId = '#projects';
+      if (targetId === '#journey') targetId = '#chronology';
       const targetEl = document.querySelector(targetId);
       if (targetEl) {
         e.preventDefault();
+        const headerOffset = window.innerWidth < 840 ? -100 : -72;
         if (lenisInstance) {
-          lenisInstance.scrollTo(targetEl, { offset: -60 });
+          lenisInstance.scrollTo(targetEl, { offset: headerOffset });
         } else {
           targetEl.scrollIntoView({ behavior: 'smooth' });
         }
@@ -152,12 +155,10 @@ function initCustomCursor() {
 }
 
 /* --------------------------------------------------------------------------
-   04. NAVIGATION & MOBILE OVERLAY
+   04. RESTORED TOP NAVIGATION
    -------------------------------------------------------------------------- */
 function initNavigation() {
   const header = document.getElementById('site-header');
-  const toggleBtn = document.getElementById('mobile-nav-toggle');
-  const navMenu = document.getElementById('nav-menu');
   const progressBar = document.getElementById('scroll-progress-bar');
 
   // Scroll listener for header blur & progress bar
@@ -173,31 +174,6 @@ function initNavigation() {
       progressBar.style.width = `${pct}%`;
     }
   }, { passive: true });
-
-  // Mobile menu toggle
-  if (toggleBtn && navMenu) {
-    const toggleMenu = (open) => {
-      toggleBtn.classList.toggle('is-active', open);
-      navMenu.classList.toggle('is-open', open);
-      toggleBtn.setAttribute('aria-expanded', String(open));
-    };
-
-    toggleBtn.addEventListener('click', () => {
-      const isOpen = navMenu.classList.contains('is-open');
-      toggleMenu(!isOpen);
-    });
-
-    navMenu.querySelectorAll('.nav-item-link').forEach((link) => {
-      link.addEventListener('click', () => toggleMenu(false));
-    });
-
-    document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape' && navMenu.classList.contains('is-open')) {
-        toggleMenu(false);
-        toggleBtn.focus();
-      }
-    });
-  }
 
   // Footer Year
   const yearEl = document.getElementById('footer-year');
@@ -234,6 +210,7 @@ function initScrollChapterSpy() {
   const chapters = document.querySelectorAll('section[id]');
   const chapterIndicator = document.getElementById('current-chapter-text');
   const navLinks = document.querySelectorAll('.nav-item-link');
+  const navContainer = document.querySelector('.site-nav');
   if (!chapters.length) return;
 
   const chapterNames = {
@@ -241,9 +218,12 @@ function initScrollChapterSpy() {
     'about': '02 // PHILOSOPHY',
     'scope': '03 // SCOPE',
     'projects': '04 // SELECTED WORK',
-    'stack': '05 // SYSTEM MATRIX',
-    'chronology': '06 // CHRONOLOGY',
-    'contact': '07 // TRANSMISSION'
+    'work': '04 // SELECTED WORK',
+    'architecture': '05 // SYSTEM ARCHITECTURE',
+    'stack': '06 // SYSTEM MATRIX',
+    'chronology': '07 // CHRONOLOGY',
+    'journey': '07 // CHRONOLOGY',
+    'contact': '08 // TRANSMISSION'
   };
 
   const observer = new IntersectionObserver((entries) => {
@@ -254,7 +234,15 @@ function initScrollChapterSpy() {
           chapterIndicator.textContent = chapterNames[id];
         }
         navLinks.forEach((link) => {
-          link.classList.toggle('active', link.getAttribute('href') === `#${id}`);
+          const href = link.getAttribute('href');
+          const isMatch = href === `#${id}` ||
+            (id === 'projects' && href === '#work') ||
+            (id === 'chronology' && href === '#journey');
+          link.classList.toggle('active', isMatch);
+          if (isMatch && navContainer && window.innerWidth < 840) {
+            const offset = link.offsetLeft - 24;
+            navContainer.scrollTo({ left: Math.max(0, offset), behavior: 'smooth' });
+          }
         });
       }
     });
@@ -676,94 +664,26 @@ function initProjectTabs() {
         btn.classList.add('is-active');
         const activePane = dossier.querySelector(`[data-pane="${targetTab}"]`);
         if (activePane) activePane.classList.add('is-active');
-
-        playSynthesizedClick(750);
       });
     });
   });
 }
 
-/* --------------------------------------------------------------------------
-   11. PROCEDURAL AUDIO TELEMETRY SYNTHESIZER (Web Audio API)
-   -------------------------------------------------------------------------- */
-let audioCtx = null;
-let soundEnabled = false;
-
-function initAudioTelemetry() {
-  const toggleBtn = document.getElementById('sound-toggle-btn');
-  if (!toggleBtn) return;
-
-  toggleBtn.addEventListener('click', () => {
-    if (!audioCtx) {
-      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-      if (AudioContextClass) {
-        audioCtx = new AudioContextClass();
-      }
-    }
-
-    if (audioCtx && audioCtx.state === 'suspended') {
-      audioCtx.resume();
-    }
-
-    soundEnabled = !soundEnabled;
-    toggleBtn.classList.toggle('is-active', soundEnabled);
-    const statusText = toggleBtn.querySelector('.sound-status-text');
-    if (statusText) {
-      statusText.textContent = soundEnabled ? 'AUDIO: ON' : 'AUDIO: MUTED';
-    }
-
-    if (soundEnabled) {
-      playSynthesizedClick(880);
-    }
-  });
-
-  // Add click feedback to interactive elements
-  document.querySelectorAll('a, button, .nav-item-link, .category-tags li').forEach(el => {
-    el.addEventListener('click', () => {
-      playSynthesizedClick(520);
-    });
-  });
-}
-
-function playSynthesizedClick(freq = 520) {
-  if (!soundEnabled || !audioCtx) return;
-  try {
-    const osc = audioCtx.createOscillator();
-    const gain = audioCtx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-    osc.frequency.exponentialRampToValueAtTime(freq * 0.4, audioCtx.currentTime + 0.035);
-
-    gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.035);
-
-    osc.connect(gain);
-    gain.connect(audioCtx.destination);
-
-    osc.start();
-    osc.stop(audioCtx.currentTime + 0.035);
-  } catch (e) {
-    // Graceful silent fallback
-  }
-}
-
-// Update DOM listener initialization
+// DOM listener initialization
 document.addEventListener('DOMContentLoaded', () => {
   initArchitectureVisualizer();
   initProjectTabs();
-  initAudioTelemetry();
 });
 
 /* --------------------------------------------------------------------------
-   12. TACTILE 3D BUTTONS PHYSICS & TILT DYNAMICS
+   11. TACTILE 3D BUTTONS PHYSICS & TILT DYNAMICS
    -------------------------------------------------------------------------- */
 function init3DButtons() {
   const isTouch = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0);
   if (isTouch) return;
 
   const buttons = document.querySelectorAll(
-    '.btn-primary, .btn-secondary, .btn-header-cta, .btn-submit-transmission, .dossier-tab-btn, .sound-toggle-btn, .arch-interactive-row, .signal-channel-card, .footer-social-btn'
+    '.btn-primary, .btn-secondary, .btn-submit-transmission, .dossier-tab-btn, .arch-interactive-row, .signal-channel-card, .footer-social-btn'
   );
 
   buttons.forEach((btn) => {
