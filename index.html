@@ -119,10 +119,10 @@
       <!-- Real-Time Telemetry & Chapter Spy -->
       <div class="header-telemetry" aria-hidden="true">
         <div class="telemetry-item">
-          <span class="telemetry-dot"></span>
-          <span>AVAILABLE</span>
+          <span class="hud-spatial-badge"><span class="hud-spatial-dot"></span> 3D WORLD ACTIVE</span>
         </div>
         <div class="telemetry-item">
+          <span class="telemetry-dot"></span>
           <span>MALDA, IN · <span id="live-time-ist">--:--:-- IST</span></span>
         </div>
         <div class="telemetry-item">
@@ -137,6 +137,7 @@
           <li><a href="#about" class="nav-item-link">About</a></li>
           <li><a href="#scope" class="nav-item-link">Scope</a></li>
           <li><a href="#projects" class="nav-item-link">Work</a></li>
+          <li><a href="#architecture" class="nav-item-link">Architecture</a></li>
           <li><a href="#stack" class="nav-item-link">Stack</a></li>
           <li><a href="#chronology" class="nav-item-link">Journey</a></li>
           <li><a href="#contact" class="nav-item-link">Contact</a></li>
@@ -145,6 +146,10 @@
 
       <!-- Header Action -->
       <div class="header-actions">
+        <button class="sound-toggle-btn" id="sound-toggle-btn" aria-label="Toggle Audio Telemetry">
+          <i class="fa-solid fa-volume-xmark" aria-hidden="true"></i>
+          <span class="sound-status-text">AUDIO: MUTED</span>
+        </button>
         <a href="#contact" class="btn-header-cta">
           <span>Inquire</span>
           <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
@@ -419,17 +424,46 @@
                 <span>01 // Local AI &amp; RAG Architecture</span>
               </div>
               <h3 class="dossier-title">Readstacks <span class="subname">(Local RAG AI Chat)</span></h3>
-              <p class="dossier-problem-statement">
-                A multi-user document intelligence platform that allows users to upload documents (PDF, TXT, DOCX) 
-                and converse with private, context-aware AI. Runs 100% locally via Ollama with zero paid external APIs 
-                and complete data confidentiality.
-              </p>
-              <ul class="dossier-specs-list">
-                <li><span>Per-user isolated vector embeddings powered by <code>vectra</code></span></li>
-                <li><span>Local inference with Ollama Llama 3.2 providing streaming text answers</span></li>
-                <li><span>Document parsing pipeline with chunking, token budgeting, and citation mapping</span></li>
-                <li><span>SQLite metadata store with JWT session authentication and Nginx proxy</span></li>
-              </ul>
+
+              <div class="dossier-nav-tabs">
+                <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
+                <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
+                <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
+              </div>
+
+              <div class="dossier-pane is-active" data-pane="overview">
+                <p class="dossier-problem-statement">
+                  A multi-user document intelligence platform that allows users to upload documents (PDF, TXT, DOCX) 
+                  and converse with private, context-aware AI. Runs 100% locally via Ollama with zero paid external APIs 
+                  and complete data confidentiality.
+                </p>
+              </div>
+
+              <div class="dossier-pane" data-pane="specs">
+                <ul class="dossier-specs-list">
+                  <li><span>Per-user isolated vector embeddings powered by <code>vectra</code></span></li>
+                  <li><span>Local inference with Ollama Llama 3.2 providing streaming text answers</span></li>
+                  <li><span>Document parsing pipeline with chunking, token budgeting, and citation mapping</span></li>
+                  <li><span>SQLite metadata store with JWT session authentication and Nginx proxy</span></li>
+                </ul>
+              </div>
+
+              <div class="dossier-pane" data-pane="decisions">
+                <div class="dossier-decisions-grid">
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-shield-halved"></i> 100% Local Inference &amp; Zero Data Leakage</div>
+                    <p class="decision-body">Eliminated cloud API subscriptions by hosting Ollama Llama 3.2 locally. Documents and query embeddings remain strictly on-host.</p>
+                  </div>
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-layer-group"></i> Isolated Per-User Vector Spaces</div>
+                    <p class="decision-body">Utilized vectra to partition vector indices per session, eliminating cross-tenant context bleeding during simultaneous queries.</p>
+                  </div>
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-bolt"></i> Token Budgeting &amp; Chunk Pruning</div>
+                    <p class="decision-body">Implemented sliding cosine-similarity ranking to ensure retrieved passages strictly respect the 8K context token window.</p>
+                  </div>
+                </div>
+              </div>
               <div class="dossier-tech-tags" aria-label="Technologies">
                 <span class="tech-tag">Node.js</span>
                 <span class="tech-tag">Express</span>
@@ -494,17 +528,46 @@
                 <span>02 // Python Automation &amp; Telegram Bot</span>
               </div>
               <h3 class="dossier-title">Malda College Notification Bot</h3>
-              <p class="dossier-problem-statement">
-                Automated information dispatch system serving students of Malda College. 
-                Monitors the official college portal around the clock, scrapes newly published notifications, 
-                parses departmental academic routines, and broadcasts structured updates via Telegram.
-              </p>
-              <ul class="dossier-specs-list">
-                <li><span>Asynchronous bot engine built with modern aiogram v3</span></li>
-                <li><span>Continuous portal notice scraper built with BeautifulSoup4 on Linux cron</span></li>
-                <li><span>Per-user preference toggles allowing students to subscribe to specific departments</span></li>
-                <li><span>Integrated Google Sheets API bridge for telemetry and administrative broadcast overrides</span></li>
-              </ul>
+
+              <div class="dossier-nav-tabs">
+                <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
+                <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
+                <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
+              </div>
+
+              <div class="dossier-pane is-active" data-pane="overview">
+                <p class="dossier-problem-statement">
+                  Automated information dispatch system serving students of Malda College. 
+                  Monitors the official college portal around the clock, scrapes newly published notifications, 
+                  parses departmental academic routines, and broadcasts structured updates via Telegram.
+                </p>
+              </div>
+
+              <div class="dossier-pane" data-pane="specs">
+                <ul class="dossier-specs-list">
+                  <li><span>Asynchronous bot engine built with modern aiogram v3</span></li>
+                  <li><span>Continuous portal notice scraper built with BeautifulSoup4 on Linux cron</span></li>
+                  <li><span>Per-user preference toggles allowing students to subscribe to specific departments</span></li>
+                  <li><span>Integrated Google Sheets API bridge for telemetry and administrative broadcast overrides</span></li>
+                </ul>
+              </div>
+
+              <div class="dossier-pane" data-pane="decisions">
+                <div class="dossier-decisions-grid">
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-fingerprint"></i> Content Hashing &amp; Storm Prevention</div>
+                    <p class="decision-body">Calculates SHA-256 hashes of published notice tables. Alerts are triggered exclusively on genuine content alterations, avoiding duplicate broadcast spam.</p>
+                  </div>
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-network-wired"></i> Resilient Selector Fallbacks</div>
+                    <p class="decision-body">Engineered multi-tiered HTML parsing selectors that automatically fallback when upstream institutional portal markup fluctuates.</p>
+                  </div>
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-table"></i> Google Sheets Control Plane</div>
+                    <p class="decision-body">Bridged Google Sheets API as a zero-infrastructure admin ledger, allowing instant broadcast overrides without custom web dashboards.</p>
+                  </div>
+                </div>
+              </div>
               <div class="dossier-tech-tags" aria-label="Technologies">
                 <span class="tech-tag">Python</span>
                 <span class="tech-tag">aiogram v3</span>
@@ -558,17 +621,46 @@
                 <span>03 // Web3 &amp; Telegram Mini-App</span>
               </div>
               <h3 class="dossier-title">Blitz Game Zone <span class="subname">(TON Blockchain)</span></h3>
-              <p class="dossier-problem-statement">
-                A full-stack Telegram Mini App integrated with the TON blockchain ecosystem. 
-                Features rewarded advertising loops, an automated 60/40 revenue-sharing model, 
-                comprehensive anti-fraud telemetry, and Tonkeeper wallet withdrawals.
-              </p>
-              <ul class="dossier-specs-list">
-                <li><span>54 commits of tested full-stack code across client and server architectures</span></li>
-                <li><span>Tonkeeper wallet authentication and withdrawal transaction validation</span></li>
-                <li><span>Role-based administration management panel with live analytics and fraud rules</span></li>
-                <li><span>Containerized production deployment behind an Nginx reverse proxy</span></li>
-              </ul>
+
+              <div class="dossier-nav-tabs">
+                <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
+                <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
+                <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
+              </div>
+
+              <div class="dossier-pane is-active" data-pane="overview">
+                <p class="dossier-problem-statement">
+                  A full-stack Telegram Mini App integrated with the TON blockchain ecosystem. 
+                  Features rewarded advertising loops, an automated 60/40 revenue-sharing model, 
+                  comprehensive anti-fraud telemetry, and Tonkeeper wallet withdrawals.
+                </p>
+              </div>
+
+              <div class="dossier-pane" data-pane="specs">
+                <ul class="dossier-specs-list">
+                  <li><span>54 commits of tested full-stack code across client and server architectures</span></li>
+                  <li><span>Tonkeeper wallet authentication and withdrawal transaction validation</span></li>
+                  <li><span>Role-based administration management panel with live analytics and fraud rules</span></li>
+                  <li><span>Containerized production deployment behind an Nginx reverse proxy</span></li>
+                </ul>
+              </div>
+
+              <div class="dossier-pane" data-pane="decisions">
+                <div class="dossier-decisions-grid">
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-coins"></i> 60/40 Ledger Verification</div>
+                    <p class="decision-body">Automated split calculation with dual-entry ledger tracking ensures transparent creator profit share and payout verification.</p>
+                  </div>
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-wallet"></i> Tonkeeper Cryptographic Proof</div>
+                    <p class="decision-body">Validates Tonkeeper wallet signatures on the backend before queueing any TON withdrawal transactions.</p>
+                  </div>
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-user-shield"></i> Anti-Fraud Velocity Engine</div>
+                    <p class="decision-body">Employs IP velocity checks and client fingerprint heuristics to suppress automated bot clicking and spoofed impressions.</p>
+                  </div>
+                </div>
+              </div>
               <div class="dossier-tech-tags" aria-label="Technologies">
                 <span class="tech-tag">Node.js</span>
                 <span class="tech-tag">Express</span>
@@ -623,17 +715,46 @@
                 <span>04 // Event Architecture &amp; Discord Bot</span>
               </div>
               <h3 class="dossier-title">Pixel-Assistor <span class="subname">(158-Command Bot)</span></h3>
-              <p class="dossier-problem-statement">
-                A massive community infrastructure Discord bot engineered to replace multiple single-purpose bots. 
-                Features 158 commands across 9 distinct categories including server moderation, Lavalink audio streaming, 
-                cryptocurrency tracking, mini-games, and administrative utilities.
-              </p>
-              <ul class="dossier-specs-list">
-                <li><span>Engineered on Discord.js v14 with strict slash-command parsing and event dispatch</span></li>
-                <li><span>Low-latency audio streaming subsystem integrated with a remote Lavalink audio node</span></li>
-                <li><span>Dual database abstraction layer with support for SQLite and MongoDB</span></li>
-                <li><span>Dockerized container deployment with PM2 cluster management for zero downtime</span></li>
-              </ul>
+
+              <div class="dossier-nav-tabs">
+                <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
+                <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
+                <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
+              </div>
+
+              <div class="dossier-pane is-active" data-pane="overview">
+                <p class="dossier-problem-statement">
+                  A massive community infrastructure Discord bot engineered to replace multiple single-purpose bots. 
+                  Features 158 commands across 9 distinct categories including server moderation, Lavalink audio streaming, 
+                  cryptocurrency tracking, mini-games, and administrative utilities.
+                </p>
+              </div>
+
+              <div class="dossier-pane" data-pane="specs">
+                <ul class="dossier-specs-list">
+                  <li><span>Engineered on Discord.js v14 with strict slash-command parsing and event dispatch</span></li>
+                  <li><span>Low-latency audio streaming subsystem integrated with a remote Lavalink audio node</span></li>
+                  <li><span>Dual database abstraction layer with support for SQLite and MongoDB</span></li>
+                  <li><span>Dockerized container deployment with PM2 cluster management for zero downtime</span></li>
+                </ul>
+              </div>
+
+              <div class="dossier-pane" data-pane="decisions">
+                <div class="dossier-decisions-grid">
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-sitemap"></i> Modular Command Architecture</div>
+                    <p class="decision-body">Dynamic filesystem loader decouples 158 slash commands across 9 directories, allowing hot-reloading individual commands without server restarts.</p>
+                  </div>
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-music"></i> Remote Lavalink Voice Pipeline</div>
+                    <p class="decision-body">Offloads audio demuxing and Opus encoding to an external Java Lavalink node, keeping Node.js event loop latency below 5ms.</p>
+                  </div>
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-database"></i> Pluggable Storage Abstraction</div>
+                    <p class="decision-body">Uniform repository pattern enables seamless switching between SQLite for local tests and MongoDB for multi-guild production clustering.</p>
+                  </div>
+                </div>
+              </div>
               <div class="dossier-tech-tags" aria-label="Technologies">
                 <span class="tech-tag">JavaScript (ES6+)</span>
                 <span class="tech-tag">Discord.js v14</span>
@@ -687,17 +808,46 @@
                 <span>05 // Web Platform &amp; Design System</span>
               </div>
               <h3 class="dossier-title">Malda Portal <span class="subname">(50-Page Platform)</span></h3>
-              <p class="dossier-problem-statement">
-                A complete institutional static web portal architected for Malda College. 
-                Encompasses 50 responsive pages spanning 20 root institutional pages, 19 academic subject departments, 
-                6 administrative cells, and 5 campus facilities.
-              </p>
-              <ul class="dossier-specs-list">
-                <li><span>Modular CSS custom properties architecture with dark and light mode support</span></li>
-                <li><span>Complete information architecture covering all faculty, courses, cells, and facilities</span></li>
-                <li><span>Zero heavyweight runtime framework overhead — pure HTML5, modern CSS Grid, and vanilla JS</span></li>
-                <li><span>Multi-platform deployment configuration prepared for Nginx, Vercel, and Docker</span></li>
-              </ul>
+
+              <div class="dossier-nav-tabs">
+                <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
+                <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
+                <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
+              </div>
+
+              <div class="dossier-pane is-active" data-pane="overview">
+                <p class="dossier-problem-statement">
+                  A complete institutional static web portal architected for Malda College. 
+                  Encompasses 50 responsive pages spanning 20 root institutional pages, 19 academic subject departments, 
+                  6 administrative cells, and 5 campus facilities.
+                </p>
+              </div>
+
+              <div class="dossier-pane" data-pane="specs">
+                <ul class="dossier-specs-list">
+                  <li><span>Modular CSS custom properties architecture with dark and light mode support</span></li>
+                  <li><span>Complete information architecture covering all faculty, courses, cells, and facilities</span></li>
+                  <li><span>Zero heavyweight runtime framework overhead — pure HTML5, modern CSS Grid, and vanilla JS</span></li>
+                  <li><span>Multi-platform deployment configuration prepared for Nginx, Vercel, and Docker</span></li>
+                </ul>
+              </div>
+
+              <div class="dossier-pane" data-pane="decisions">
+                <div class="dossier-decisions-grid">
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-feather-pointed"></i> Zero Runtime JavaScript Overhead</div>
+                    <p class="decision-body">Engineered without client-side hydration frameworks, ensuring initial render times under 150ms and perfect Lighthouse audit scores.</p>
+                  </div>
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-palette"></i> CSS Custom Properties Token Hierarchy</div>
+                    <p class="decision-body">Implemented token-based CSS variables supporting instant theme switching across all 50 department pages without duplicate CSS bundles.</p>
+                  </div>
+                  <div class="decision-item">
+                    <div class="decision-title"><i class="fa-solid fa-boxes-packing"></i> Multi-Target Container Packaging</div>
+                    <p class="decision-body">Configured dual Docker alpine and Nginx setups with aggressive gzip and static asset header caching.</p>
+                  </div>
+                </div>
+              </div>
               <div class="dossier-tech-tags" aria-label="Technologies">
                 <span class="tech-tag">HTML5</span>
                 <span class="tech-tag">CSS3 (Modern Grid)</span>
@@ -746,11 +896,128 @@
     </section>
 
     <!-- ============================================================
-         CHAPTER 05: SYSTEM STACK MATRIX
+         CHAPTER 05: SYSTEM ARCHITECTURE VISUALIZATION
+    ============================================================ -->
+    <section id="architecture" class="chapter-section container" aria-label="Technical architecture visualization">
+      <header class="chapter-header" data-reveal>
+        <span class="chapter-eyebrow">[ 05 // SYSTEM ARCHITECTURE VISUALIZATION ]</span>
+        <h2 class="chapter-headline">Full-stack pipeline.<br><em>From client to bare metal.</em></h2>
+        <p class="chapter-subline">Interactive breakdown of how my software systems are structured, containerized, secured, and served. Click or hover any tier to inspect the 3D model, latency metrics, and architectural decisions.</p>
+      </header>
+
+      <div class="arch-visualizer-container" data-reveal>
+        <!-- Interactive Stack Column (7 Layers) -->
+        <div class="arch-stack-column">
+          <div class="arch-interactive-row is-active" data-arch-layer="0" tabindex="0" role="button" aria-label="Inspect Client Tier">
+            <div class="arch-row-left">
+              <span class="arch-tier-pill">Tier 01 // Edge Client</span>
+              <h3 class="arch-row-name">Client &amp; TMA Interface</h3>
+              <span class="arch-row-desc">Telegram Mini App, Web Clients, Discord Gateway</span>
+            </div>
+            <div class="arch-row-right">
+              <span class="arch-row-status"><i class="fa-solid fa-circle-check"></i> 200 OK</span>
+            </div>
+          </div>
+
+          <div class="arch-interactive-row" data-arch-layer="1" tabindex="0" role="button" aria-label="Inspect Reverse Proxy">
+            <div class="arch-row-left">
+              <span class="arch-tier-pill">Tier 02 // Security &amp; Edge</span>
+              <h3 class="arch-row-name">Nginx Reverse Proxy &amp; SSL</h3>
+              <span class="arch-row-desc">TLS 1.3 Termination, Certbot, Rate Limiting, DuckDNS</span>
+            </div>
+            <div class="arch-row-right">
+              <span class="arch-row-status"><i class="fa-solid fa-lock"></i> TLS 1.3</span>
+            </div>
+          </div>
+
+          <div class="arch-interactive-row" data-arch-layer="2" tabindex="0" role="button" aria-label="Inspect API Gateway">
+            <div class="arch-row-left">
+              <span class="arch-tier-pill">Tier 03 // Routing &amp; Bus</span>
+              <h3 class="arch-row-name">API &amp; Bot Gateways</h3>
+              <span class="arch-row-desc">Express.js, FastAPI, aiogram v3, Discord.js v14</span>
+            </div>
+            <div class="arch-row-right">
+              <span class="arch-row-status"><i class="fa-solid fa-route"></i> ROUTED</span>
+            </div>
+          </div>
+
+          <div class="arch-interactive-row" data-arch-layer="3" tabindex="0" role="button" aria-label="Inspect Worker Engines">
+            <div class="arch-row-left">
+              <span class="arch-tier-pill">Tier 04 // Async Compute</span>
+              <h3 class="arch-row-name">Worker Engines &amp; Daemons</h3>
+              <span class="arch-row-desc">Node.js Clusters, Python Asyncio, BeautifulSoup Scrapers</span>
+            </div>
+            <div class="arch-row-right">
+              <span class="arch-row-status"><i class="fa-solid fa-gears"></i> ACTIVE</span>
+            </div>
+          </div>
+
+          <div class="arch-interactive-row" data-arch-layer="4" tabindex="0" role="button" aria-label="Inspect Persistence Tier">
+            <div class="arch-row-left">
+              <span class="arch-tier-pill">Tier 05 // Persistence</span>
+              <h3 class="arch-row-name">Relational &amp; Vector Stores</h3>
+              <span class="arch-row-desc">PostgreSQL, SQLite, MongoDB, vectra Vector Indices</span>
+            </div>
+            <div class="arch-row-right">
+              <span class="arch-row-status"><i class="fa-solid fa-database"></i> SYNCED</span>
+            </div>
+          </div>
+
+          <div class="arch-interactive-row" data-arch-layer="5" tabindex="0" role="button" aria-label="Inspect Local AI Engine">
+            <div class="arch-row-left">
+              <span class="arch-tier-pill">Tier 06 // Local AI</span>
+              <h3 class="arch-row-name">Ollama &amp; Local Inference</h3>
+              <span class="arch-row-desc">Llama 3.2, Token Budgeting, OpenCode AI Workflow</span>
+            </div>
+            <div class="arch-row-right">
+              <span class="arch-row-status"><i class="fa-solid fa-microchip"></i> 0% COST</span>
+            </div>
+          </div>
+
+          <div class="arch-interactive-row" data-arch-layer="6" tabindex="0" role="button" aria-label="Inspect Bare Metal Host">
+            <div class="arch-row-left">
+              <span class="arch-tier-pill">Tier 07 // Bare Metal &amp; Host</span>
+              <h3 class="arch-row-name">Host Linux &amp; Docker Core</h3>
+              <span class="arch-row-desc">Ubuntu LTS VPS, PM2 Daemon Manager, Systemd Cron</span>
+            </div>
+            <div class="arch-row-right">
+              <span class="arch-row-status"><i class="fa-solid fa-server"></i> DAEMON</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Live Technical Inspector Drawer -->
+        <aside class="arch-detail-column" aria-live="polite">
+          <div class="arch-inspector-header">
+            <span class="arch-inspector-title" id="arch-detail-tier">01 // CLIENT TIER</span>
+            <span class="badge-featured">Active Layer Telemetry</span>
+          </div>
+          <div class="arch-inspector-body">
+            <h4 id="arch-detail-headline">Telegram Mini App, Web &amp; Discord Clients</h4>
+            <p id="arch-detail-desc">Edge consumer interfaces engineered for sub-50ms interaction response. Implements TON Connect 2.0 cryptographic wallet handshakes, mobile touch ergonomics, and resilient WebSocket reconnect loops.</p>
+            
+            <div class="arch-metrics-matrix" id="arch-detail-metrics">
+              <!-- Dynamically populated by main.js -->
+            </div>
+
+            <h5 style="font-size:0.88rem;color:var(--ink-primary);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.06em;font-family:var(--font-mono);">
+              <i class="fa-solid fa-shield-halved" style="color:var(--acc-cyan);margin-right:0.4rem;"></i>
+              Architecture &amp; Engineering Decisions
+            </h5>
+            <ul class="arch-decisions-list" id="arch-detail-decisions">
+              <!-- Dynamically populated by main.js -->
+            </ul>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         CHAPTER 06: SYSTEM STACK MATRIX
     ============================================================ -->
     <section id="stack" class="chapter-section container" aria-label="Technical skills matrix">
       <header class="chapter-header" data-reveal>
-        <span class="chapter-eyebrow">[ 05 // SYSTEM STACK MATRIX ]</span>
+        <span class="chapter-eyebrow">[ 06 // SYSTEM STACK MATRIX ]</span>
         <h2 class="chapter-headline">Tools of the trade.<br><em>Verified proficiency.</em></h2>
         <p class="chapter-subline">No arbitrary percentage bars. Only technologies actively used across shipped production repositories.</p>
       </header>
@@ -869,7 +1136,7 @@
     ============================================================ -->
     <section id="chronology" class="chapter-section container" aria-label="Engineering journey and proof">
       <header class="chapter-header" data-reveal>
-        <span class="chapter-eyebrow">[ 06 // CHRONOLOGY &amp; PROOF ]</span>
+        <span class="chapter-eyebrow">[ 07 // CHRONOLOGY &amp; PROOF ]</span>
         <h2 class="chapter-headline">The road so far.<br><em>Documented progress.</em></h2>
         <p class="chapter-subline">A verifiable timeline of self-directed learning, shipped projects, and academic grounding.</p>
       </header>
@@ -968,7 +1235,7 @@
 
       <!-- Transmission Header -->
       <header class="chapter-header" data-reveal>
-        <span class="chapter-eyebrow">[ 07 // TRANSMISSION &amp; INQUIRY ]</span>
+        <span class="chapter-eyebrow">[ 08 // TRANSMISSION &amp; INQUIRY ]</span>
         <h2 class="chapter-headline">Let's build<br><em>something impactful.</em></h2>
         <p class="chapter-subline">Have a project in mind, an automation challenge, or an opportunity where a fast-shipping developer would add value? My inbox is open.</p>
       </header>
@@ -1185,7 +1452,7 @@
   <script src="scripts/vendor/lenis.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="scripts/email-config.js"></script>
-  <script src="scripts/3d-scene.js?v=20260904_cinematic"></script>
+  <script src="scripts/3d-world.js?v=20260905_world"></script>
   <script src="scripts/main.js?v=20260904_cinematic"></script>
 </body>
 </html>

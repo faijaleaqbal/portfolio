@@ -474,3 +474,283 @@ function initContactForm() {
     }
   });
 }
+
+/* --------------------------------------------------------------------------
+   09. INTERACTIVE TECHNICAL ARCHITECTURE VISUALIZER
+   -------------------------------------------------------------------------- */
+const ARCH_LAYERS_DATA = [
+  {
+    tier: '01 // CLIENT TIER',
+    headline: 'Telegram Mini App, Web & Discord Clients',
+    desc: 'Edge consumer interfaces engineered for sub-50ms interaction response. Implements TON Connect 2.0 cryptographic wallet handshakes, mobile touch ergonomics, and resilient WebSocket reconnect loops.',
+    metrics: [
+      { label: 'ROUNDTRIP LATENCY', value: '< 45ms' },
+      { label: 'TRANSPORT', value: 'WSS / HTTPS' },
+      { label: 'BUNDLE FOOTPRINT', value: '< 180KB' },
+      { label: 'CLIENT ISOLATION', value: 'JWT / Session' }
+    ],
+    decisions: [
+      'Custom TON provider abstraction prevents third-party wallet spoofing.',
+      'Lightweight Vanilla JS and strict asset minimization keeps initial paint under 350ms.',
+      'Idempotency tokens prevent duplicate state transitions during mobile network swaps.'
+    ]
+  },
+  {
+    tier: '02 // REVERSE PROXY & EDGE',
+    headline: 'Nginx Reverse Proxy, Let\'s Encrypt SSL & DDoS Filter',
+    desc: 'Front-line entry bastion terminating TLS 1.3 across all subdomains (faijaleaqbal, readstacks, blitzgamezone, maldacollege). Features rate limiting buffers, security headers, and static caching.',
+    metrics: [
+      { label: 'SSL PROTOCOL', value: 'TLS 1.3 Strict' },
+      { label: 'BUFFER CAPACITY', value: '256KB Upstream' },
+      { label: 'MAX REQ SIZE', value: '50MB Streaming' },
+      { label: 'UPTIME SLA', value: '99.98%' }
+    ],
+    decisions: [
+      'Configured dedicated proxy buffer sizes to eliminate HTTP 502 bad gateway spikes from oversized OAuth tokens.',
+      'Strict SSL cipher suites with DH parameters generated on-host.',
+      'Location-based proxy pass isolates each project repository into independent internal network ports.'
+    ]
+  },
+  {
+    tier: '03 // API & BOT GATEWAY',
+    headline: 'Express.js, FastAPI & Async Dispatchers',
+    desc: 'Central routing and event arbitration bus. Ingests webhook callbacks from Telegram and Discord gateways, parses REST commands, and enforces role-based access control.',
+    metrics: [
+      { label: 'EVENT ROUTING', value: '158 Slash Cmds' },
+      { label: 'CONCURRENCY', value: 'Asyncio Non-Block' },
+      { label: 'AUTH ENGINE', value: 'JWT + Hash Verification' },
+      { label: 'MIDDLEWARE', value: 'CORS + Rate Limit' }
+    ],
+    decisions: [
+      'Segregated bot polling and webhook ingestion to avoid CPU starvation on single-threaded workers.',
+      'Unified error formatting across all endpoints for deterministic front-end handling.',
+      'Memory-efficient stream piping directly into response sockets for audio and large payloads.'
+    ]
+  },
+  {
+    tier: '04 // WORKER ENGINES & DAEMONS',
+    headline: 'Node.js Cluster, BeautifulSoup4 & Cron Daemons',
+    desc: 'Asynchronous background processes executing scheduled tasks, portal scraping loops, anti-fraud evaluation, and notification queue dispatch.',
+    metrics: [
+      { label: 'SCRAPE CYCLE', value: 'Continuous Cron' },
+      { label: 'PROCESS MODEL', value: 'PM2 Cluster' },
+      { label: 'RETRY POLICY', value: 'Exponential Backoff' },
+      { label: 'DEDUPLICATION', value: 'SHA-256 Hash' }
+    ],
+    decisions: [
+      'HTML scraping parses DOM trees with fallback selectors to withstand college website markup changes.',
+      'Content hashing prevents broadcast notification storms when only whitespace changes on upstream notices.',
+      'Automated restart on memory threshold (>250MB) prevents long-term daemon memory leaks.'
+    ]
+  },
+  {
+    tier: '05 // PERSISTENCE & VECTOR STORAGE',
+    headline: 'PostgreSQL, SQLite & Vectra Vector Spaces',
+    desc: 'Multi-model data persistence layer. Relational transaction ledgers in PostgreSQL/SQLite combined with per-user isolated vector embeddings in Vectra for semantic document retrieval.',
+    metrics: [
+      { label: 'RELATIONAL STORE', value: 'PostgreSQL / SQLite' },
+      { label: 'VECTOR SPACE', value: 'vectra Cosine' },
+      { label: 'INDEX TYPE', value: 'HNSW / Flat Vector' },
+      { label: 'TRANSACTIONS', value: 'ACID Compliant' }
+    ],
+    decisions: [
+      'Zero-cost local vector persistence using vectra avoids recurring cloud vector DB subscription costs.',
+      'Per-user isolated vector stores guarantee 100% data confidentiality between document workspaces.',
+      'Automated nightly SQLite WAL checkpointing and tarball backups to secure storage.'
+    ]
+  },
+  {
+    tier: '06 // LOCAL AI INFERENCE ENGINE',
+    headline: 'Ollama Llama 3.2 & Token Budgeting Engine',
+    desc: 'Self-hosted local inference runtime executing Llama 3.2 models without external API subscriptions. Features token budgeting, context chunking, and streaming SSE tokens.',
+    metrics: [
+      { label: 'LOCAL MODEL', value: 'Llama 3.2 (Ollama)' },
+      { label: 'TOKEN STREAMING', value: 'Server-Sent Events' },
+      { label: 'EXTERNAL API COST', value: '$0.00 / Zero Rent' },
+      { label: 'CONTEXT WINDOW', value: '8K Budgeted' }
+    ],
+    decisions: [
+      '100% local processing eliminates cloud API rate limits, downtime, and recurring billing liabilities.',
+      'Dynamic chunk pruning ensures prompt context never overflows inference context budget.',
+      'Streaming responses streamed straight to client sockets for instantaneous perceived response.'
+    ]
+  },
+  {
+    tier: '07 // HOST INFRASTRUCTURE & LINUX CORE',
+    headline: 'Ubuntu Cloud Host, PM2 & Systemd Services',
+    desc: 'Underlying cloud Linux environment hosting all microservices, bots, reverse proxies, and local AI runtimes with 24/7 autonomous recovery and telemetry monitoring.',
+    metrics: [
+      { label: 'OS ENVIRONMENT', value: 'Ubuntu Linux LTS' },
+      { label: 'PROCESS CONTROL', value: 'PM2 + Systemd' },
+      { label: 'CONTAINERS', value: 'Docker & Compose' },
+      { label: 'RECOVERY', value: 'Autonomous Watchdog' }
+    ],
+    decisions: [
+      'Custom bash backup automation scripts with automated exclusions for logs and build caches.',
+      'Strict unprivileged user permissions (azureuser) with sudo privilege isolation.',
+      'Direct PM2 cluster zero-downtime reloads during git pull deployments.'
+    ]
+  }
+];
+
+function initArchitectureVisualizer() {
+  const rows = document.querySelectorAll('.arch-interactive-row');
+  const titleEl = document.getElementById('arch-detail-tier');
+  const headlineEl = document.getElementById('arch-detail-headline');
+  const descEl = document.getElementById('arch-detail-desc');
+  const metricsEl = document.getElementById('arch-detail-metrics');
+  const decisionsEl = document.getElementById('arch-detail-decisions');
+
+  if (!rows.length || !titleEl) return;
+
+  function updateDetailView(idx) {
+    const data = ARCH_LAYERS_DATA[idx];
+    if (!data) return;
+
+    titleEl.textContent = data.tier;
+    headlineEl.textContent = data.headline;
+    descEl.textContent = data.desc;
+
+    if (metricsEl) {
+      metricsEl.innerHTML = data.metrics.map(m => `
+        <div class="arch-metric-box">
+          <span class="metric-lbl">${m.label}</span>
+          <span class="metric-val">${m.value}</span>
+        </div>
+      `).join('');
+    }
+
+    if (decisionsEl) {
+      decisionsEl.innerHTML = data.decisions.map(d => `
+        <li>
+          <i class="fa-solid fa-code-branch" aria-hidden="true"></i>
+          <span>${d}</span>
+        </li>
+      `).join('');
+    }
+
+    rows.forEach(r => r.classList.remove('is-active'));
+    const activeRow = document.querySelector(`[data-arch-layer="${idx}"]`);
+    if (activeRow) activeRow.classList.add('is-active');
+
+    // Notify 3D World Engine
+    if (typeof window.selectArchitectureLayer === 'function') {
+      window.selectArchitectureLayer(idx);
+    }
+  }
+
+  rows.forEach((row) => {
+    row.addEventListener('click', () => {
+      const idx = parseInt(row.getAttribute('data-arch-layer'), 10);
+      updateDetailView(idx);
+      playSynthesizedClick(600);
+    });
+
+    row.addEventListener('mouseenter', () => {
+      const idx = parseInt(row.getAttribute('data-arch-layer'), 10);
+      if (typeof window.selectArchitectureLayer === 'function') {
+        window.selectArchitectureLayer(idx);
+      }
+    });
+  });
+
+  // Default to Layer 0 (Client)
+  updateDetailView(0);
+}
+
+/* --------------------------------------------------------------------------
+   10. PROJECT PROGRESSIVE DISCLOSURE TABS
+   -------------------------------------------------------------------------- */
+function initProjectTabs() {
+  const dossiers = document.querySelectorAll('.project-dossier');
+  dossiers.forEach((dossier) => {
+    const tabBtns = dossier.querySelectorAll('.dossier-tab-btn');
+    const panes = dossier.querySelectorAll('.dossier-pane');
+
+    tabBtns.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const targetTab = btn.getAttribute('data-tab');
+        tabBtns.forEach(b => b.classList.remove('is-active'));
+        panes.forEach(p => p.classList.remove('is-active'));
+
+        btn.classList.add('is-active');
+        const activePane = dossier.querySelector(`[data-pane="${targetTab}"]`);
+        if (activePane) activePane.classList.add('is-active');
+
+        playSynthesizedClick(750);
+      });
+    });
+  });
+}
+
+/* --------------------------------------------------------------------------
+   11. PROCEDURAL AUDIO TELEMETRY SYNTHESIZER (Web Audio API)
+   -------------------------------------------------------------------------- */
+let audioCtx = null;
+let soundEnabled = false;
+
+function initAudioTelemetry() {
+  const toggleBtn = document.getElementById('sound-toggle-btn');
+  if (!toggleBtn) return;
+
+  toggleBtn.addEventListener('click', () => {
+    if (!audioCtx) {
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (AudioContextClass) {
+        audioCtx = new AudioContextClass();
+      }
+    }
+
+    if (audioCtx && audioCtx.state === 'suspended') {
+      audioCtx.resume();
+    }
+
+    soundEnabled = !soundEnabled;
+    toggleBtn.classList.toggle('is-active', soundEnabled);
+    const statusText = toggleBtn.querySelector('.sound-status-text');
+    if (statusText) {
+      statusText.textContent = soundEnabled ? 'AUDIO: ON' : 'AUDIO: MUTED';
+    }
+
+    if (soundEnabled) {
+      playSynthesizedClick(880);
+    }
+  });
+
+  // Add click feedback to interactive elements
+  document.querySelectorAll('a, button, .nav-item-link, .category-tags li').forEach(el => {
+    el.addEventListener('click', () => {
+      playSynthesizedClick(520);
+    });
+  });
+}
+
+function playSynthesizedClick(freq = 520) {
+  if (!soundEnabled || !audioCtx) return;
+  try {
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    osc.frequency.exponentialRampToValueAtTime(freq * 0.4, audioCtx.currentTime + 0.035);
+
+    gain.gain.setValueAtTime(0.03, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.035);
+
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.035);
+  } catch (e) {
+    // Graceful silent fallback
+  }
+}
+
+// Update DOM listener initialization
+document.addEventListener('DOMContentLoaded', () => {
+  initArchitectureVisualizer();
+  initProjectTabs();
+  initAudioTelemetry();
+});

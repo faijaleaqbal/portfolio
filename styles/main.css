@@ -2082,3 +2082,354 @@ body.cursor-view .cursor-ring {
 [data-reveal-group].is-revealed > *:nth-child(6) { transition-delay: 0.34s; }
 [data-reveal-group].is-revealed > *:nth-child(7) { transition-delay: 0.40s; }
 [data-reveal-group].is-revealed > *:nth-child(8) { transition-delay: 0.46s; }
+
+/* --------------------------------------------------------------------------
+   18. 3D SPATIAL ENGINE HUD & TELEMETRY CONTROLS
+   -------------------------------------------------------------------------- */
+.hud-spatial-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  background: rgba(14, 20, 32, 0.75);
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: var(--radius-xs);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  color: var(--acc-cyan);
+  backdrop-filter: blur(8px);
+}
+
+.hud-spatial-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--acc-cyan);
+  box-shadow: 0 0 8px var(--acc-cyan);
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+.sound-toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(14, 20, 32, 0.6);
+  border: 1px solid var(--line-hair);
+  border-radius: var(--radius-xs);
+  padding: 0.3rem 0.65rem;
+  color: var(--ink-secondary);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  cursor: pointer;
+  transition: all var(--trans-fast);
+}
+
+.sound-toggle-btn:hover,
+.sound-toggle-btn.is-active {
+  border-color: var(--acc-core);
+  color: var(--ink-primary);
+  background: rgba(99, 119, 255, 0.12);
+}
+
+/* --------------------------------------------------------------------------
+   19. INTERACTIVE TECHNICAL ARCHITECTURE VISUALIZER
+   -------------------------------------------------------------------------- */
+.arch-visualizer-container {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  gap: 2.5rem;
+  margin-top: 3rem;
+  align-items: start;
+}
+
+@media (max-width: 992px) {
+  .arch-visualizer-container {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+.arch-stack-column {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.arch-interactive-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.15rem 1.4rem;
+  background: rgba(10, 14, 22, 0.75);
+  border: 1px solid var(--line-hair);
+  border-left: 4px solid var(--line-hair);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  transition: all var(--trans-normal);
+  position: relative;
+  backdrop-filter: blur(12px);
+}
+
+.arch-interactive-row:hover {
+  background: rgba(16, 23, 38, 0.9);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateX(4px);
+}
+
+.arch-interactive-row.is-active {
+  background: rgba(18, 27, 45, 0.95);
+  border-color: rgba(56, 189, 248, 0.4);
+  transform: translateX(8px);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.8), 0 0 15px -3px rgba(56, 189, 248, 0.2);
+}
+
+.arch-interactive-row[data-arch-layer="0"].is-active { border-left-color: var(--acc-cyan); }
+.arch-interactive-row[data-arch-layer="1"].is-active { border-left-color: var(--acc-violet); }
+.arch-interactive-row[data-arch-layer="2"].is-active { border-left-color: var(--acc-core); }
+.arch-interactive-row[data-arch-layer="3"].is-active { border-left-color: var(--acc-emerald); }
+.arch-interactive-row[data-arch-layer="4"].is-active { border-left-color: var(--acc-amber); }
+.arch-interactive-row[data-arch-layer="5"].is-active { border-left-color: var(--acc-cyan); }
+.arch-interactive-row[data-arch-layer="6"].is-active { border-left-color: #ffffff; }
+
+.arch-row-left {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.arch-tier-pill {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--acc-cyan);
+  font-weight: 600;
+}
+
+.arch-row-name {
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--ink-primary);
+  letter-spacing: -0.01em;
+}
+
+.arch-row-desc {
+  font-size: 0.85rem;
+  color: var(--ink-secondary);
+}
+
+.arch-row-right {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.arch-row-status {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  padding: 0.25rem 0.55rem;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  color: var(--acc-emerald);
+  border-radius: var(--radius-xs);
+}
+
+.arch-detail-column {
+  position: sticky;
+  top: 100px;
+  background: rgba(12, 17, 27, 0.85);
+  border: 1px solid var(--line-mid);
+  border-radius: var(--radius-sm);
+  padding: 2rem;
+  backdrop-filter: blur(16px);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8);
+}
+
+.arch-inspector-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--line-hair);
+  padding-bottom: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.arch-inspector-title {
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  color: var(--acc-cyan);
+  letter-spacing: 0.08em;
+}
+
+.arch-inspector-body h4 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--ink-primary);
+  margin-bottom: 0.5rem;
+}
+
+.arch-inspector-body p {
+  font-size: 0.95rem;
+  color: var(--ink-secondary);
+  line-height: 1.6;
+  margin-bottom: 1.5rem;
+}
+
+.arch-metrics-matrix {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.85rem;
+  margin-bottom: 1.5rem;
+}
+
+.arch-metric-box {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--line-hair);
+  border-radius: var(--radius-xs);
+  padding: 0.75rem 1rem;
+}
+
+.arch-metric-box .metric-lbl {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--ink-tertiary);
+  display: block;
+}
+
+.arch-metric-box .metric-val {
+  font-family: var(--font-mono);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--acc-cyan);
+  margin-top: 0.2rem;
+  display: block;
+}
+
+.arch-decisions-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.arch-decisions-list li {
+  font-size: 0.86rem;
+  color: var(--ink-secondary);
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  line-height: 1.5;
+}
+
+.arch-decisions-list li i {
+  color: var(--acc-core);
+  margin-top: 0.25rem;
+  font-size: 0.8rem;
+}
+
+/* --------------------------------------------------------------------------
+   20. PROJECT PROGRESSIVE DISCLOSURE TABS
+   -------------------------------------------------------------------------- */
+.dossier-nav-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 1.25rem 0 1.5rem 0;
+  border-bottom: 1px solid var(--line-hair);
+  padding-bottom: 0.5rem;
+  overflow-x: auto;
+}
+
+.dossier-tab-btn {
+  background: none;
+  border: none;
+  color: var(--ink-tertiary);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  padding: 0.4rem 0.75rem;
+  cursor: pointer;
+  border-radius: var(--radius-xs);
+  transition: all var(--trans-fast);
+  white-space: nowrap;
+}
+
+.dossier-tab-btn:hover {
+  color: var(--ink-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.dossier-tab-btn.is-active {
+  color: var(--acc-cyan);
+  background: rgba(56, 189, 248, 0.1);
+  font-weight: 600;
+}
+
+.dossier-pane {
+  display: none;
+}
+
+.dossier-pane.is-active {
+  display: block;
+  animation: fadeInPane 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fadeInPane {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dossier-decisions-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.decision-item {
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--line-hair);
+  border-radius: var(--radius-xs);
+  padding: 0.85rem 1.15rem;
+}
+
+.decision-title {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--ink-primary);
+  margin-bottom: 0.3rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.decision-title i {
+  color: var(--acc-amber);
+  font-size: 0.8rem;
+}
+
+.decision-body {
+  font-size: 0.84rem;
+  color: var(--ink-secondary);
+  line-height: 1.55;
+  margin: 0;
+}
+
+/* --------------------------------------------------------------------------
+   21. WHITE-SCREEN WEBGL FALLBACK PROTECTION
+   -------------------------------------------------------------------------- */
+.no-webgl #webgl-canvas {
+  display: none !important;
+}
+
+.no-webgl body {
+  background: radial-gradient(circle at 75% 15%, rgba(99, 119, 255, 0.14), transparent 45%),
+              radial-gradient(circle at 25% 55%, rgba(56, 189, 248, 0.09), transparent 40%),
+              radial-gradient(circle at 60% 85%, rgba(16, 185, 129, 0.08), transparent 40%),
+              #050608 !important;
+}
+
+.no-webgl .grain-overlay {
+  opacity: 0.04;
+}
