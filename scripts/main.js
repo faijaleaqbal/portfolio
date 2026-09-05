@@ -93,7 +93,7 @@ function initLenisAndGSAP() {
       const targetEl = document.querySelector(targetId);
       if (targetEl) {
         e.preventDefault();
-        const headerOffset = window.innerWidth < 840 ? -100 : -72;
+        const headerOffset = window.innerWidth < 768 ? -100 : -72;
         if (lenisInstance) {
           lenisInstance.scrollTo(targetEl, { offset: headerOffset });
         } else {
@@ -239,7 +239,7 @@ function initScrollChapterSpy() {
             (id === 'projects' && href === '#work') ||
             (id === 'chronology' && href === '#journey');
           link.classList.toggle('active', isMatch);
-          if (isMatch && navContainer && window.innerWidth < 840) {
+          if (isMatch && navContainer && window.innerWidth < 768) {
             const offset = link.offsetLeft - 24;
             navContainer.scrollTo({ left: Math.max(0, offset), behavior: 'smooth' });
           }
