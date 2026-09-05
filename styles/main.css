@@ -682,9 +682,12 @@ body.cursor-view .cursor-ring {
     overflow-y: hidden;
     scrollbar-width: none;
     -webkit-overflow-scrolling: touch;
-    mask-image: linear-gradient(to right, black 86%, transparent 100%);
-    -webkit-mask-image: linear-gradient(to right, black 86%, transparent 100%);
-    padding-bottom: 2px;
+    mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to right, black 85%, transparent 100%);
+    padding: 2px 0;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
   }
 
   .site-nav::-webkit-scrollbar {
@@ -692,43 +695,46 @@ body.cursor-view .cursor-ring {
   }
 
   .nav-menu {
-    gap: 0.9rem;
+    display: flex !important;
+    flex-direction: row !important;
+    position: static !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    gap: 0.5rem;
     padding: 2px 1.5rem 4px 0;
+    margin: 0;
+    list-style: none;
+    width: max-content;
   }
 
   .nav-item-link {
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
-    padding: 0.4rem 0.15rem;
+    min-height: 34px;
+    padding: 0 0.75rem;
     font-size: 0.78rem;
-    background: transparent;
-    border: none;
+    font-family: var(--font-mono);
     color: var(--ink-secondary);
-    position: relative;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: var(--radius-xs);
     white-space: nowrap;
+    text-decoration: none;
+    transition: color var(--trans-fast), background var(--trans-fast), border-color var(--trans-fast), box-shadow var(--trans-fast);
   }
 
   .nav-item-link::after {
-    display: block;
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 0%;
-    height: 2px;
-    background: var(--acc-core);
-    transition: width var(--trans-fast);
+    display: none;
   }
 
   .nav-item-link:hover,
   .nav-item-link.active {
     color: #ffffff;
-    background: transparent;
-  }
-
-  .nav-item-link.active::after {
-    width: 100%;
+    background: rgba(99, 119, 255, 0.2);
+    border-color: var(--acc-core);
+    box-shadow: 0 0 12px rgba(99, 119, 255, 0.35);
   }
 }
 
