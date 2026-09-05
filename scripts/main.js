@@ -683,7 +683,7 @@ function init3DButtons() {
   if (isTouch) return;
 
   const buttons = document.querySelectorAll(
-    '.btn-primary, .btn-secondary, .btn-submit-transmission, .dossier-tab-btn, .arch-interactive-row, .signal-channel-card, .footer-social-btn'
+    '.btn-primary, .btn-secondary, .btn-header-cta, .btn-submit-transmission, .dossier-tab-btn, .arch-interactive-row, .signal-channel-card, .footer-social-btn, .nav-item-link, .brand-anchor, .hud-spatial-badge'
   );
 
   buttons.forEach((btn) => {
