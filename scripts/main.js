@@ -474,6 +474,9 @@ function initContactForm() {
         formStatus.textContent = 'Transmission successful — direct dispatch sent to Md Faijal Eaqbal. Response within 6 hours.';
       }
       form.reset();
+      if (typeof ScrollTrigger !== 'undefined') {
+        ScrollTrigger.refresh();
+      }
     } else {
       // Channel 3: Interactive Fail-Safe with prefilled Gmail / Mailto actions
       const encSub = encodeURIComponent(`Portfolio Inquiry from ${inquiryData.name} [${inquiryData.service}]`);
