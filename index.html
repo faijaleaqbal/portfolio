@@ -1775,6 +1775,20 @@
   <script src="scripts/email-config.js"></script>
   <script src="scripts/3d-world.js?v=20260905_world"></script>
   <script src="scripts/liquid-button.js?v=20260906_liquid"></script>
-  <script src="scripts/main.js?v=20260906_contact_fix"></script>
+  <script src="scripts/main.js?v=20260906_fix_syntax"></script>
+  <script>
+    // Universal fail-safe: Ensure preloader never traps the user under network or runtime anomalies
+    (function() {
+      function unlock() {
+        const preloader = document.getElementById('preloader');
+        if (preloader && !preloader.classList.contains('is-loaded')) {
+          preloader.classList.add('is-loaded');
+        }
+        document.body.classList.remove('is-locked');
+      }
+      window.addEventListener('load', () => setTimeout(unlock, 800));
+      setTimeout(unlock, 2500); // hard fallback after 2.5s maximum
+    })();
+  </script>
 </body>
 </html>

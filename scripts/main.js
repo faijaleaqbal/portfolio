@@ -493,11 +493,11 @@ function initContactForm() {
           </div>
         `;
       }
-    } finally {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalBtnHTML;
-      }
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.innerHTML = originalBtnHTML;
     }
   });
 }

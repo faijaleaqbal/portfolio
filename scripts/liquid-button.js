@@ -397,6 +397,10 @@ try {
 } catch (e) {
   gl = null;
 }
+if (!gl) {
+  console.warn('[liquid-button] WebGL2 not supported or unavailable on this device. Retaining CSS styling.');
+  return;
+}
 const stage = host;
 const btn   = host.querySelector('.liquid-button');
 if (!btn) return;
