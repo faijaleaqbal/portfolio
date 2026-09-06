@@ -397,62 +397,101 @@ function initContactForm() {
       formStatus.textContent = '';
     }
 
+    const inquiryData = {
+      name: nameInput.value.trim(),
+      email: emailInput.value.trim(),
+      service: serviceInput ? serviceInput.value || 'General Inquiry' : 'General Inquiry',
+      budget: budgetInput ? budgetInput.value || 'Not specified' : 'Not specified',
+      message: messageInput.value.trim()
+    };
+
+    let delivered = false;
+    let deliveryChannel = '';
+
+    // Channel 1: Attempt EmailJS if credentials and library exist
     const hasCredentials = typeof emailjs !== 'undefined' &&
                            typeof EMAILJS_CONFIG !== 'undefined' &&
                            EMAILJS_CONFIG.SERVICE_ID &&
                            EMAILJS_CONFIG.TEMPLATE_ID;
 
-    if (!hasCredentials) {
-      setTimeout(() => {
-        if (submitBtn) {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalBtnHTML;
+    if (hasCredentials) {
+      try {
+        const templateParams = {
+          name: inquiryData.name,
+          email: inquiryData.email,
+          title: 'Engineering Inquiry via Portfolio',
+          message: inquiryData.message,
+          from_name: inquiryData.name,
+          from_email: inquiryData.email,
+          reply_to: inquiryData.email,
+          subject: 'Engineering Inquiry',
+          to_name: 'Md Faijal Eaqbal',
+          to_email: 'faijaleaqbal@gmail.com',
+          service: inquiryData.service,
+          budget: inquiryData.budget
+        };
+
+        const response = await emailjs.send(
+          EMAILJS_CONFIG.SERVICE_ID,
+          EMAILJS_CONFIG.TEMPLATE_ID,
+          templateParams
+        );
+
+        if (response && (response.status === 200 || response.text === 'OK')) {
+          delivered = true;
+          deliveryChannel = 'email';
         }
-        if (formStatus) {
-          formStatus.className = 'form-status-alert success visible';
-          formStatus.textContent = 'Transmission noted. (Demo mode fallback)';
-        }
-        form.reset();
-      }, 700);
-      return;
+      } catch (emailErr) {
+        console.warn('[Contact] EmailJS primary channel unavailable, engaging server fallback:', emailErr);
+      }
     }
 
-    try {
-      const templateParams = {
-        name: nameInput.value.trim(),
-        email: emailInput.value.trim(),
-        title: 'Engineering Inquiry via Portfolio',
-        message: messageInput.value.trim(),
-        from_name: nameInput.value.trim(),
-        from_email: emailInput.value.trim(),
-        reply_to: emailInput.value.trim(),
-        subject: 'Engineering Inquiry',
-        to_name: 'Md Faijal Eaqbal',
-        to_email: 'faijaleaqbal@gmail.com',
-        service: serviceInput ? serviceInput.value || 'General Inquiry' : 'General Inquiry',
-        budget: budgetInput ? budgetInput.value || 'Not specified' : 'Not specified'
-      };
+    // Channel 2: Direct Server API Dispatch (Instant Telegram Notification & Persistent Storage)
+    if (!delivered) {
+      try {
+        const serverRes = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(inquiryData)
+        });
 
-      const response = await emailjs.send(
-        EMAILJS_CONFIG.SERVICE_ID,
-        EMAILJS_CONFIG.TEMPLATE_ID,
-        templateParams
-      );
-
-      if (response && (response.status === 200 || response.text === 'OK')) {
-        if (formStatus) {
-          formStatus.className = 'form-status-alert success visible';
-          formStatus.textContent = 'Transmission successful — direct email dispatched to faijaleaqbal@gmail.com. Response within 6 hours.';
+        if (serverRes.ok) {
+          const resJson = await serverRes.json();
+          if (resJson.success) {
+            delivered = true;
+            deliveryChannel = 'server';
+          }
         }
-        form.reset();
-      } else {
-        throw new Error(`EmailJS status ${response ? response.status : 'error'}`);
+      } catch (serverErr) {
+        console.warn('[Contact] Server dispatch channel error:', serverErr);
       }
-    } catch (err) {
-      console.error('[EmailJS] Transmission error:', err);
+    }
+
+    // Process Delivery Status
+    if (delivered) {
+      if (formStatus) {
+        formStatus.className = 'form-status-alert success visible';
+        formStatus.textContent = 'Transmission successful — direct dispatch sent to Md Faijal Eaqbal. Response within 6 hours.';
+      }
+      form.reset();
+    } else {
+      // Channel 3: Interactive Fail-Safe with prefilled Gmail / Mailto actions
+      const encSub = encodeURIComponent(`Portfolio Inquiry from ${inquiryData.name} [${inquiryData.service}]`);
+      const encBody = encodeURIComponent(
+        `Hi Faijal,\n\nName: ${inquiryData.name}\nEmail: ${inquiryData.email}\nService: ${inquiryData.service}\nBudget: ${inquiryData.budget}\n\nMessage:\n${inquiryData.message}\n`
+      );
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=faijaleaqbal@gmail.com&su=${encSub}&body=${encBody}`;
+      const mailtoUrl = `mailto:faijaleaqbal@gmail.com?subject=${encSub}&body=${encBody}`;
+
       if (formStatus) {
         formStatus.className = 'form-status-alert error visible';
-        formStatus.innerHTML = `Transmission could not complete automatically. Please write directly to <a href="mailto:faijaleaqbal@gmail.com" style="text-decoration:underline;color:#fff;">faijaleaqbal@gmail.com</a>.`;
+        formStatus.innerHTML = `
+          <div style="margin-bottom:0.4rem;"><strong>Transmission could not complete automatically.</strong> Please dispatch directly with 1-click:</div>
+          <div style="display:flex;gap:0.6rem;flex-wrap:wrap;margin-top:0.5rem;">
+            <a href="${gmailUrl}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 0.85rem;background:#ef4444;color:#fff;border-radius:4px;text-decoration:none;font-weight:600;font-size:0.75rem;"><i class="fa-brands fa-google"></i> Open Pre-filled in Gmail</a>
+            <a href="${mailtoUrl}" style="display:inline-flex;align-items:center;gap:0.4rem;padding:0.4rem 0.85rem;background:#1e293b;border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:4px;text-decoration:none;font-weight:600;font-size:0.75rem;"><i class="fa-solid fa-envelope"></i> Open Default Mail</a>
+          </div>
+        `;
       }
     } finally {
       if (submitBtn) {
