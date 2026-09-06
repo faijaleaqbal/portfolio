@@ -365,7 +365,7 @@ function initContactForm() {
   // Initialize EmailJS when configured
   if (typeof emailjs !== 'undefined' && typeof EMAILJS_CONFIG !== 'undefined' && EMAILJS_CONFIG.PUBLIC_KEY) {
     try {
-      emailjs.init(EMAILJS_CONFIG.PUBLIC_KEY);
+      emailjs.init({ publicKey: EMAILJS_CONFIG.PUBLIC_KEY });
     } catch (err) {
       console.warn('[EmailJS] Init warning:', err);
     }
@@ -434,7 +434,8 @@ function initContactForm() {
         const response = await emailjs.send(
           EMAILJS_CONFIG.SERVICE_ID,
           EMAILJS_CONFIG.TEMPLATE_ID,
-          templateParams
+          templateParams,
+          EMAILJS_CONFIG.PUBLIC_KEY
         );
 
         if (response && (response.status === 200 || response.text === 'OK')) {
