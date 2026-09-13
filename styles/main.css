@@ -1195,11 +1195,18 @@ section[id] {
 /* Verified Metrics Bar */
 .hero-metrics {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
+  grid-template-columns: 1fr;
+  gap: 1rem;
   padding-top: 2rem;
   border-top: 1px solid var(--line-hair);
   margin-top: 1rem;
+}
+
+@media (min-width: 560px) {
+  .hero-metrics {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
 }
 
 .metric-item {
