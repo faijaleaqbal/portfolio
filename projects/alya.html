@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Alya — Case Study | Md Faijal Eaqbal</title>
+  <meta name="description" content="Alya case study: autonomous Hinglish AI assistant. Rasa 3.6, 41 intents, 40-skill registry, 494 test functions, GitHub + OpenCode MCP, live on Telegram.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#050608">
+  <link rel="canonical" href="https://faijaleaqbal.duckdns.org/projects/alya.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23050608'/%3E%3Ctext x='50' y='70' font-size='60' font-family='monospace' font-weight='800' text-anchor='middle' fill='%236377ff'%3EF%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="../styles/main.css">
+  <link rel="stylesheet" href="case-study.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header class="site-header" id="site-header">
+    <div class="header-container">
+      <a href="../index.html#home" class="brand-anchor" aria-label="Faijal Eaqbal — Home"><span class="brand-glyph" aria-hidden="true">&lambda;</span><span>faijal<span class="brand-tag">.dev</span></span></a>
+      <nav class="site-nav" aria-label="Primary site navigation"><ul class="nav-menu"><li><a href="../index.html#projects" class="nav-item-link">← All work</a></li><li><a href="#problem" class="nav-item-link">Problem</a></li><li><a href="#architecture" class="nav-item-link">Architecture</a></li><li><a href="#engineering" class="nav-item-link">Engineering</a></li><li><a href="#security" class="nav-item-link">Security</a></li><li><a href="#testing" class="nav-item-link">Testing</a></li><li><a href="#result" class="nav-item-link">Result</a></li></ul></nav>
+      <div class="header-actions"><a href="https://t.me/Alya_Rasa_Bot" target="_blank" rel="noopener noreferrer" class="btn-header-cta"><span>Telegram</span><i class="fa-brands fa-telegram" aria-hidden="true"></i></a></div>
+    </div>
+  </header>
+  <main id="main-content" class="page-wrap case-wrap">
+    <section class="case-hero container">
+      <span class="chapter-eyebrow">[ CASE STUDY · FLAGSHIP 05 ]</span>
+      <h1>Alya</h1>
+      <p class="case-lede">Autonomous Hinglish AI assistant on Telegram — Rasa NLU plus Groq fallback, 40-skill registry, MCP tool servers, OAuth workspace pipelines. Live on Telegram.</p>
+      <div class="dossier-proof-strip" aria-label="Verified metrics"><span>40-skill registry</span><span>41 Rasa intents</span><span>494 test functions</span><span>Rasa 3.6 + Groq</span><span>GitHub + OpenCode MCP</span><span class="live-dot">Live on Telegram</span></div>
+      <div class="dossier-actions-row"><a href="https://t.me/Alya_Rasa_Bot" target="_blank" rel="noopener noreferrer" class="btn-primary"><i class="fa-brands fa-telegram" aria-hidden="true"></i><span>Try Live on Telegram</span></a><a href="https://github.com/faijaleaqbal/Rasa" target="_blank" rel="noopener noreferrer" class="btn-secondary"><i class="fa-brands fa-github" aria-hidden="true"></i><span>GitHub</span></a></div>
+      <p class="metrics-footnote">Counted 2026-09-13: 40 distinct /commands in actions/command_registry.py, 41 intent/action entries in domain.yml, 494 test functions across tests/*.py, 49 action modules. Older README copy says 37+ skills; the registry count (40) is authoritative. Bot handle verified live: t.me/Alya_Rasa_Bot (HTTP 200).</p>
+    </section>
+    <section id="problem" class="container case-section"><h2>01 — Problem</h2><p>Personal assistants either answer trivia or execute tools — rarely both, and almost never in Hinglish with real workspace access (Gmail, Drive, Calendar, Outlook) plus document generation (PDF, Excel, Word) plus headless code tools.</p></section>
+    <section id="architecture" class="container case-section"><h2>02 — Solution &amp; Architecture</h2><p>Dual-tier runtime: a Rasa 3.6 agent (port 5005) owns NLU and dialogue state; an async action server (port 5055) owns execution across 40 registered skills; Groq inference covers generative fallback; MCP clients reach GitHub (port 4097) and OpenCode (port 4096) tool servers; Nginx fronts the stack.</p>
+    <pre class="case-code"><code>Rasa Agent (:5005) &lt;───▶ Action Server (:5055, 49 modules)
+  command_registry.py — 40 /commands with planner metadata
+  agent_planner/executor/verifier/memory/triggers — orchestration loop
+  mcp_client.py — GitHub MCP (:4097) · OpenCode MCP (:4096)
+  llm_provider.py — Groq fallback when NLU rules need generation
+  api_gateway.py + api_reliability.py — weather, news, FX, crypto, jobs…
+  jobs_service/ — reminders, medicine, bills, commute, server diagnostics</code></pre></section>
+    <section id="engineering" class="container case-section"><h2>03 — Engineering challenges</h2><h3>Why split NLU from execution?</h3><p>Slow tools (OAuth refreshes, document synthesis, MCP calls) must never stall conversation state. Rasa classifies intent and extracts slots; the action server runs non-blocking I/O around it.</p><h3>How do you stop the agent inventing tools?</h3><p>The registry derives planner metadata from skill descriptions — unregistered goals resolve to None instead of guessed actions. Authorization, container-isolation and webhook-auth tests guard the boundary.</p><h3>How do 40 skills stay testable?</h3><p>494 test functions: command inventory, routing, authorization, security regression, scheduler, LLM provider, Telegram UX, image tools, jobs/scholarships pipelines.</p></section>
+    <section id="security" class="container case-section"><h2>04 — Security</h2><ul><li>OAuth 2.0 refresh cycles kept server-side; webhook auth on inbound Telegram traffic</li><li>Container isolation for executed tools; authorization layer per skill</li><li>Breach checks via HaveIBeenPwned SHA-1 k-anonymity — passwords never leave the host</li><li>Security regression + red-team reports maintained in-repo</li></ul></section>
+    <section id="testing" class="container case-section"><h2>05 — Testing</h2><ul><li><strong>494 test functions</strong> across tests/*.py (inventory, routing, auth, regression, scheduler, UX…)</li><li>E2E acceptance report and production cutover docs in-repo</li></ul></section>
+    <section id="result" class="container case-section"><h2>06 — Result &amp; demo</h2><p>An agent that chats in Hinglish, executes across workspaces, generates real documents, and drives headless code tools — with the registry and test suite to prove the boundary between "can do" and "guessed". Message it.</p><div class="dossier-actions-row"><a href="https://t.me/Alya_Rasa_Bot" target="_blank" rel="noopener noreferrer" class="btn-primary"><i class="fa-brands fa-telegram" aria-hidden="true"></i><span>Message @Alya_Rasa_Bot</span></a><a href="https://github.com/faijaleaqbal/Rasa" target="_blank" rel="noopener noreferrer" class="btn-secondary"><i class="fa-brands fa-github" aria-hidden="true"></i><span>GitHub</span></a></div></section>
+  </main>
+  <footer class="editorial-footer"><div class="container"><div class="footer-bottom-bar"><span>© <span id="footer-year">2026</span> Md Faijal Eaqbal.</span><a href="../index.html#home" class="back-to-top-trigger"><span>Back to portfolio</span><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></a></div></div></footer>
+  <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

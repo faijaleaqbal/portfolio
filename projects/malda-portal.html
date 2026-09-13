@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Malda Portal — Case Study | Md Faijal Eaqbal</title>
+  <meta name="description" content="Malda Portal case study: 62-page institutional web portal. 31 root pages, 20 subject pages, 6 cells, 5 facilities. Zero framework, token theming.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#050608">
+  <link rel="canonical" href="https://faijaleaqbal.duckdns.org/projects/malda-portal.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23050608'/%3E%3Ctext x='50' y='70' font-size='60' font-family='monospace' font-weight='800' text-anchor='middle' fill='%236377ff'%3EF%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="../styles/main.css">
+  <link rel="stylesheet" href="case-study.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header class="site-header" id="site-header">
+    <div class="header-container">
+      <a href="../index.html#home" class="brand-anchor" aria-label="Faijal Eaqbal — Home"><span class="brand-glyph" aria-hidden="true">&lambda;</span><span>faijal<span class="brand-tag">.dev</span></span></a>
+      <nav class="site-nav" aria-label="Primary site navigation"><ul class="nav-menu"><li><a href="../index.html#projects" class="nav-item-link">← All work</a></li><li><a href="#problem" class="nav-item-link">Problem</a></li><li><a href="#architecture" class="nav-item-link">Architecture</a></li><li><a href="#engineering" class="nav-item-link">Engineering</a></li><li><a href="#result" class="nav-item-link">Result</a></li></ul></nav>
+      <div class="header-actions"><a href="https://github.com/faijaleaqbal/malda-portal" target="_blank" rel="noopener noreferrer" class="btn-header-cta"><span>GitHub</span><i class="fa-brands fa-github" aria-hidden="true"></i></a></div>
+    </div>
+  </header>
+  <main id="main-content" class="page-wrap case-wrap">
+    <section class="case-hero container">
+      <span class="chapter-eyebrow">[ CASE STUDY · FLAGSHIP 06 ]</span>
+      <h1>Malda Portal</h1>
+      <p class="case-lede">62-page institutional web portal for Malda College — academics, administration, facilities — with zero runtime framework overhead.</p>
+      <div class="dossier-proof-strip" aria-label="Verified metrics"><span>62 HTML pages</span><span>31 root pages</span><span>20 subject pages</span><span>6 cells + 5 facilities</span><span>Zero framework</span><span>Dark/Light themes</span></div>
+      <div class="dossier-actions-row"><a href="https://github.com/faijaleaqbal/malda-portal" target="_blank" rel="noopener noreferrer" class="btn-secondary"><i class="fa-brands fa-github" aria-hidden="true"></i><span>GitHub</span></a><a href="../index.html#projects" class="btn-secondary"><span>← Back to portfolio</span></a></div>
+      <p class="metrics-footnote">Counted 2026-09-13 via filesystem: 31 root *.html + 6 cells/* + 5 facilities/* + 20 subjects/* = 62 pages. Older README copy says 50; the filesystem count (62) is authoritative.</p>
+    </section>
+    <section id="problem" class="container case-section"><h2>01 — Problem</h2><p>Institutional information scattered across outdated pages with no coherent navigation — courses, faculty, cells, facilities and notices each living in a different visual language.</p></section>
+    <section id="architecture" class="container case-section"><h2>02 — Solution &amp; Architecture</h2><p>One information architecture across 62 static pages: 31 root institutional pages (home, admissions, faculty, notices, NAAC/NIRF…), 19 academic subject departments, 6 administrative cells, 5 campus facilities. Pure HTML5 + modern CSS Grid + vanilla JS; token-based CSS custom properties for instant dark/light theming; Nginx, Vercel and Docker packaging.</p>
+    <pre class="case-code"><code>./ — 31 root pages (index, admissions, faculty, notice-board, naac-iqac, …)
+cells/ — 6 (anti-ragging, grievance, internal-complaint, minority, obc, sc-st)
+facilities/ — 5 (academic, administrative, digital, human-resource, physical)
+subjects/ — 20 (arabic, bca, bengali, botany, …)
+assets/ · robots.txt · sitemap.xml · serve.sh</code></pre></section>
+    <section id="engineering" class="container case-section"><h2>03 — Engineering decisions</h2><h3>Why no framework for 62 pages?</h3><p>Content pages don't need hydration. Static HTML keeps hosting trivial, renders fast on low-end phones, and removes an entire class of runtime failure.</p><h3>How is theming consistent at this scale?</h3><p>A CSS custom-properties token hierarchy — one variable change propagates across all 62 pages without rebuilding per-page bundles.</p><h3>How does it deploy anywhere?</h3><p>Dual Docker alpine + Nginx configs with gzip and static-asset caching headers — the same directory serves from any static host.</p></section>
+    <section id="result" class="container case-section"><h2>04 — Result</h2><p>A complete institutional portal a college can actually host: coherent IA, themed design system, sitemap + robots, multi-target deployment. The page count is verifiable with one find command.</p><div class="dossier-actions-row"><a href="https://github.com/faijaleaqbal/malda-portal" target="_blank" rel="noopener noreferrer" class="btn-primary"><i class="fa-brands fa-github" aria-hidden="true"></i><span>Inspect the source</span></a><a href="../index.html#projects" class="btn-secondary"><span>← Back to all work</span></a></div></section>
+  </main>
+  <footer class="editorial-footer"><div class="container"><div class="footer-bottom-bar"><span>© <span id="footer-year">2026</span> Md Faijal Eaqbal.</span><a href="../index.html#home" class="back-to-top-trigger"><span>Back to portfolio</span><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></a></div></div></footer>
+  <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

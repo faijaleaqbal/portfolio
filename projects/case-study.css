@@ -1,0 +1,123 @@
+/* Case study pages — reuse main design tokens, add article layout. */
+
+.case-wrap {
+  padding-top: calc(var(--nav-height) + 2rem);
+}
+
+.case-hero h1 {
+  font-family: var(--font-display);
+  font-size: clamp(2.4rem, 6vw, 4.5rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  color: var(--ink-primary);
+  margin: 1rem 0;
+}
+
+.case-lede {
+  font-size: clamp(1rem, 1.4vw, 1.2rem);
+  color: var(--ink-secondary);
+  line-height: 1.7;
+  max-width: 70ch;
+  margin-bottom: 1.25rem;
+}
+
+.case-section {
+  padding-top: clamp(2rem, 4vw, 3.5rem);
+  padding-bottom: clamp(2rem, 4vw, 3.5rem);
+  border-top: 1px solid var(--line-hair);
+  max-width: var(--container-max);
+}
+
+.case-section h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 2.6vw, 2rem);
+  color: var(--ink-primary);
+  margin-bottom: 1rem;
+  letter-spacing: -0.02em;
+}
+
+.case-section h3 {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  color: var(--ink-primary);
+  margin: 1.5rem 0 0.5rem;
+}
+
+.case-section p,
+.case-section li {
+  font-size: var(--fs-body);
+  color: var(--ink-secondary);
+  line-height: 1.75;
+  max-width: 76ch;
+}
+
+.case-section ul {
+  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.case-section code {
+  font-family: var(--font-mono);
+  font-size: 0.82em;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line-hair);
+  border-radius: 4px;
+  padding: 0.1em 0.4em;
+  color: var(--ink-primary);
+  word-break: break-word;
+}
+
+.case-code {
+  background: rgba(8, 10, 16, 0.85);
+  border: 1px solid var(--line-hair);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem 1.5rem;
+  margin: 1.25rem 0;
+  overflow-x: auto;
+}
+
+.case-code code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.8rem;
+  line-height: 1.7;
+  white-space: pre;
+}
+
+.case-shots-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+  margin: 1.25rem 0;
+}
+
+@media (min-width: 860px) {
+  .case-shots-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.case-shots-grid figure {
+  margin: 0;
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--line-hair);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+.case-shots-grid img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.case-shots-grid figcaption {
+  font-size: 0.78rem;
+  color: var(--ink-tertiary);
+  padding: 0.6rem 0.9rem;
+  border-top: 1px solid var(--line-hair);
+  font-family: var(--font-mono);
+}

@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Readstacks — Case Study | Md Faijal Eaqbal</title>
+  <meta name="description" content="Readstacks case study: private local RAG document assistant. Per-user isolated vector search, multi-provider fallback, JWT HttpOnly, SSE streaming. Live demo.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#050608">
+  <link rel="canonical" href="https://faijaleaqbal.duckdns.org/projects/readstacks.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23050608'/%3E%3Ctext x='50' y='70' font-size='60' font-family='monospace' font-weight='800' text-anchor='middle' fill='%236377ff'%3EF%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="../styles/main.css">
+  <link rel="stylesheet" href="case-study.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header class="site-header" id="site-header">
+    <div class="header-container">
+      <a href="../index.html#home" class="brand-anchor" aria-label="Faijal Eaqbal — Home"><span class="brand-glyph" aria-hidden="true">&lambda;</span><span>faijal<span class="brand-tag">.dev</span></span></a>
+      <nav class="site-nav" aria-label="Primary site navigation"><ul class="nav-menu"><li><a href="../index.html#projects" class="nav-item-link">← All work</a></li><li><a href="#problem" class="nav-item-link">Problem</a></li><li><a href="#architecture" class="nav-item-link">Architecture</a></li><li><a href="#engineering" class="nav-item-link">Engineering</a></li><li><a href="#security" class="nav-item-link">Security</a></li><li><a href="#testing" class="nav-item-link">Testing</a></li><li><a href="#result" class="nav-item-link">Result</a></li></ul></nav>
+      <div class="header-actions"><a href="https://readstacks.duckdns.org" target="_blank" rel="noopener noreferrer" class="btn-header-cta"><span>Live Demo</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a></div>
+    </div>
+  </header>
+  <main id="main-content" class="page-wrap case-wrap">
+    <section class="case-hero container">
+      <span class="chapter-eyebrow">[ CASE STUDY · FLAGSHIP 03 ]</span>
+      <h1>Readstacks</h1>
+      <p class="case-lede">Private local RAG document assistant — per-user isolated vector search, multi-provider fallback, JWT-secured, streaming chat. Live now.</p>
+      <div class="dossier-proof-strip" aria-label="Verified metrics"><span>7 doc formats</span><span>10 tests passing</span><span>SSE streaming</span><span>JWT HttpOnly</span><span>Docker Compose</span><span class="live-dot">Live demo</span></div>
+      <div class="dossier-actions-row"><a href="https://readstacks.duckdns.org" target="_blank" rel="noopener noreferrer" class="btn-primary"><span>Live Demo</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a><a href="https://github.com/faijaleaqbal/Readstacks" target="_blank" rel="noopener noreferrer" class="btn-secondary"><i class="fa-brands fa-github" aria-hidden="true"></i><span>GitHub</span></a></div>
+      <p class="metrics-footnote">Verified live 2026-09-13 (HTTP 200 on readstacks.duckdns.org, Nginx → 127.0.0.1:3000, PM2). 10/10 tests green via npm test. Formats: PDF, DOCX, TXT, MD, XLS, XLSX, CSV.</p>
+    </section>
+    <section id="problem" class="container case-section"><h2>01 — Problem</h2><p>RAG demos either ship your documents to a third-party SaaS or trap you on a single cloud vendor — and die entirely when that one provider has an outage. Neither is acceptable for private documents.</p></section>
+    <section id="architecture" class="container case-section"><h2>02 — Solution &amp; Architecture</h2><p>Local-first, multi-tenant RAG. Files are parsed, paragraph-aware chunked, embedded and written into the user's own vector index; chat streams over SSE with mid-stream provider failover; one <code>docker compose up -d</code> brings backend + local Ollama online.</p>
+    <pre class="case-code"><code>Browser (React 19 + Vite, Tailwind, Radix) ──SSE──▶ Express API
+  routes: auth.js · chat.js · documents.js
+  services: aiService.js · rateLimiter.js · providers/{gemini,groq,nvidia,ollama}
+  retrieval: MiniSearch BM25 + Vectra cosine, fused at query time
+  storage: SQLite + Vectra, namespaced per user · transactional uploads
+  ops: docker compose (backend + ollama/ollama) · Nginx (SSE-safe) · PM2</code></pre></section>
+    <section id="engineering" class="container case-section"><h2>03 — Engineering challenges</h2><h3>How is per-user isolation guaranteed?</h3><p>Databases and vector indexes are namespaced per user on the host they own; transactional uploads commit files, metadata rows and vector entries atomically — a failure rolls everything back, never orphaned chunks.</p><h3>What happens when a provider dies mid-answer?</h3><p>Token-bucket rate limiting (Gemini 15/min, Groq 30/min, NVIDIA 30/min, Ollama unlimited) triggers instant fallback; if a provider dies mid-SSE-stream, the backend re-opens against the next provider and the UI keeps rendering tokens.</p><h3>How do answers stay grounded?</h3><p>Chunks respect paragraph boundaries; PDF ingest extracts page numbers so responses carry citations like <code>[doc.pdf p.7]</code> next to grounded claims.</p></section>
+    <section id="security" class="container case-section"><h2>04 — Security</h2><ul><li>JWT in HttpOnly SameSite Secure cookies — no tokens in localStorage</li><li>bcrypt hashing, signup password policy, express-rate-limit on auth endpoints</li><li>Per-user filesystem isolation + transactional uploads</li></ul></section>
+    <section id="testing" class="container case-section"><h2>05 — Testing</h2><ul><li><strong>10/10 passing</strong> (chunking + fallback suites) — run: <code>npm test</code></li><li>CI via GitHub Actions; Docker-ready; Swagger-documented API</li></ul></section>
+    <section id="result" class="container case-section"><h2>06 — Result &amp; demo</h2><p>Privacy by default, resilient AI, zero-friction ops — and it's running right now. Open the demo, upload a document, and watch streamed, cited answers.</p><div class="dossier-actions-row"><a href="https://readstacks.duckdns.org" target="_blank" rel="noopener noreferrer" class="btn-primary"><span>Try the live demo</span><i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i></a><a href="https://github.com/faijaleaqbal/Readstacks" target="_blank" rel="noopener noreferrer" class="btn-secondary"><i class="fa-brands fa-github" aria-hidden="true"></i><span>GitHub</span></a></div></section>
+  </main>
+  <footer class="editorial-footer"><div class="container"><div class="footer-bottom-bar"><span>© <span id="footer-year">2026</span> Md Faijal Eaqbal.</span><a href="../index.html#home" class="back-to-top-trigger"><span>Back to portfolio</span><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></a></div></div></footer>
+  <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
+</body>
+</html>

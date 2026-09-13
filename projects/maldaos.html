@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>MaldaOS — Case Study | Md Faijal Eaqbal</title>
+  <meta name="description" content="MaldaOS case study: campus issue-resolution platform. 17 pages + 1 API route, 165 frontend tests, 33 AI-gateway tests, 53 RLS policies, 27 RPC functions, CI. Problem → Architecture → Engineering → Result.">
+  <meta name="robots" content="index, follow">
+  <meta name="theme-color" content="#050608">
+  <link rel="canonical" href="https://faijaleaqbal.duckdns.org/projects/maldaos.html">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23050608'/%3E%3Ctext x='50' y='70' font-size='60' font-family='monospace' font-weight='800' text-anchor='middle' fill='%236377ff'%3EF%3C/text%3E%3C/svg%3E">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer">
+  <link rel="stylesheet" href="../styles/main.css">
+  <link rel="stylesheet" href="case-study.css">
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+  <header class="site-header" id="site-header">
+    <div class="header-container">
+      <a href="../index.html#home" class="brand-anchor" aria-label="Faijal Eaqbal — Home">
+        <span class="brand-glyph" aria-hidden="true">&lambda;</span>
+        <span>faijal<span class="brand-tag">.dev</span></span>
+      </a>
+      <nav class="site-nav" aria-label="Primary site navigation">
+        <ul class="nav-menu">
+          <li><a href="../index.html#projects" class="nav-item-link">← All work</a></li>
+          <li><a href="#problem" class="nav-item-link">Problem</a></li>
+          <li><a href="#architecture" class="nav-item-link">Architecture</a></li>
+          <li><a href="#engineering" class="nav-item-link">Engineering</a></li>
+          <li><a href="#security" class="nav-item-link">Security</a></li>
+          <li><a href="#testing" class="nav-item-link">Testing</a></li>
+          <li><a href="#result" class="nav-item-link">Result</a></li>
+        </ul>
+      </nav>
+      <div class="header-actions">
+        <a href="https://github.com/faijaleaqbal/Maldaos" target="_blank" rel="noopener noreferrer" class="btn-header-cta"><span>GitHub</span><i class="fa-brands fa-github" aria-hidden="true"></i></a>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content" class="page-wrap case-wrap">
+    <section class="case-hero container">
+      <span class="chapter-eyebrow">[ CASE STUDY · FLAGSHIP 01 ]</span>
+      <h1>MaldaOS</h1>
+      <p class="case-lede">Campus Operations &amp; Issue Resolution Platform with Supabase RLS, role-based workflows, AI triage, audit logging and 3D campus visualization.</p>
+      <div class="dossier-proof-strip" aria-label="Verified metrics">
+        <span>17 pages + 1 API route</span><span>165 frontend tests passing</span><span>33 AI-gateway tests passing</span><span>53 RLS policies</span><span>27 RPC functions</span><span>8 migrations</span><span>CI: lint · typecheck · build · guards</span>
+      </div>
+      <div class="dossier-actions-row">
+        <a href="https://github.com/faijaleaqbal/Maldaos" target="_blank" rel="noopener noreferrer" class="btn-secondary"><i class="fa-brands fa-github" aria-hidden="true"></i><span>GitHub</span></a>
+        <a href="../index.html#projects" class="btn-secondary"><span>← Back to portfolio</span></a>
+      </div>
+      <p class="metrics-footnote">All numbers measured from the repository on 2026-09-13: 17 page.tsx files + 1 route.ts; 165 passing tests across 6 frontend files (7th file needs a live Supabase stack); 33 passing ai-gateway tests; 53 CREATE POLICY + 27 CREATE FUNCTION statements across 8 migrations. No live public demo — runs against a local Supabase stack.</p>
+    </section>
+
+    <section id="problem" class="container case-section">
+      <h2>01 — Problem</h2>
+      <p>Campus issues — broken infrastructure, maintenance requests, safety hazards — get reported through informal channels, get lost, and leave no verifiable resolution trail. Students can't answer "what did I report, what's happening with it"; staff have no dispatch queue; nobody can audit what changed.</p>
+    </section>
+
+    <section id="architecture" class="container case-section">
+      <h2>02 — Solution &amp; Architecture</h2>
+      <p>An institutional command ledger. Students file structured 4-step reports (description → evidence → location → review with AI advisory) and get a deterministic <code>MC-</code> ticket reference. Department staff receive dispatched work orders; super-admins get a command console with health scoring, analytics, GIS map and audit trail.</p>
+      <pre class="case-code"><code>src/app/ — 17 pages: /, login, register, dashboard, issues, issues/[id],
+  report, profile, map, admin ×8
+src/app/api/ai/analyze/route.ts — server-side AI triage (keys never hit the client)
+ai-gateway/ — Groq → OpenRouter → NVIDIA → Google → deterministic fallback
+campus-pulse-backend/supabase/migrations/ — 8 migrations: schema, helpers,
+  RPCs, RLS, storage triggers, auth trigger, geo visibility, insert guard
+middleware.ts — server-side /admin/* gate (session + DB role)</code></pre>
+      <p><strong>Route map (actual):</strong> <code>/</code>, <code>/login</code>, <code>/register</code>, <code>/dashboard</code>, <code>/issues</code>, <code>/issues/[id]</code>, <code>/report</code>, <code>/profile</code>, <code>/map</code>, <code>/admin</code>, <code>/admin/issues</code>, <code>/admin/assignments</code>, <code>/admin/map</code>, <code>/admin/analytics</code>, <code>/admin/insights</code>, <code>/admin/audit</code>, <code>/admin/settings</code>, <code>/api/ai/analyze</code>.</p>
+    </section>
+
+    <section class="container case-section">
+      <h2>Screenshots — real product</h2>
+      <div class="case-shots-grid">
+        <figure><img src="../assets/images/case-studies/maldaos-student-dashboard.png" alt="MaldaOS student dashboard" width="1280" height="800" loading="lazy"><figcaption>Student dashboard — live progress tracking</figcaption></figure>
+        <figure><img src="../assets/images/case-studies/maldaos-admin-console.png" alt="MaldaOS admin command console" width="1280" height="800" loading="lazy"><figcaption>Admin command console — triage queue + health</figcaption></figure>
+        <figure><img src="../assets/images/case-studies/maldaos-report-flow.png" alt="MaldaOS 4-step report workflow" width="1280" height="800" loading="lazy"><figcaption>4-step report workflow with AI advisory</figcaption></figure>
+      </div>
+      <p class="metrics-footnote">Screenshots are Playwright captures from the MaldaOS repo (playwright-screenshots/), resized to max 1280px for the web.</p>
+    </section>
+
+    <section id="engineering" class="container case-section">
+      <h2>03 — Engineering challenges</h2>
+      <h3>How do you stop students modifying another student's issue?</h3>
+      <p>Supabase RLS + SECURITY DEFINER RPC + database role enforcement. Roles come from <code>profiles.role</code> — never browser metadata. Direct table mutations are blocked by guard triggers; seeded demo logins are hard-blocked in production and eliminated from the client bundle at build time.</p>
+      <h3>How do you keep AI triage honest?</h3>
+      <p>AI output is advisory-only (category, severity, priority, summary, confidence) that a human accepts or rejects. Provider keys are server-only. The deterministic fallback is always labelled and the core report → assign → resolve → verify workflow works with zero providers configured.</p>
+      <h3>How is every action verifiable?</h3>
+      <p>Database-enforced transitions (<code>transition_issue_status</code> / <code>assign_issue</code> RPCs) with a 7-day student reopen window; every mutation writes to <code>audit_logs</code>, viewable at <code>/admin/audit</code> with CSV export.</p>
+    </section>
+
+    <section id="security" class="container case-section">
+      <h2>04 — Security</h2>
+      <ul>
+        <li>53 RLS policies incl. private storage buckets served via short-lived signed URLs only</li>
+        <li>27 RPC functions (SECURITY DEFINER) — the only path for privileged writes</li>
+        <li>Fail-closed mock mode: can never activate in production builds, regardless of env flags or client tampering</li>
+        <li>Student endorsement limited to one vote per student per issue, enforced in the database</li>
+      </ul>
+    </section>
+
+    <section id="testing" class="container case-section">
+      <h2>05 — Testing</h2>
+      <ul>
+        <li><strong>165 passing</strong> frontend tests across 6 files (guards, journeys, admin ops, accessibility) — run: <code>npx vitest run</code></li>
+        <li><strong>33 passing</strong> ai-gateway tests (config, deterministic fallback, features, gateway, validation) — run: <code>npm test</code> in <code>ai-gateway/</code></li>
+        <li>Backend RLS/integration suites run against an ephemeral Supabase stack in CI</li>
+        <li>CI jobs: frontend (lint · typecheck · build · guards), AI gateway (build · lint · tests), backend (migrations + RLS tests)</li>
+        <li>Scope note: the 7th frontend file (12 runtime tests) requires a live local Supabase stack and is excluded from the 165 count</li>
+      </ul>
+    </section>
+
+    <section id="result" class="container case-section">
+      <h2>06 — Result</h2>
+      <p>A production-quality campus operations platform: governed issue lifecycle, advisory AI triage, command console with live health scoring, 3D + 2D campus maps, full audit trail — with security and test evidence a reviewer can verify in the repo instead of taking on trust.</p>
+      <div class="dossier-actions-row">
+        <a href="https://github.com/faijaleaqbal/Maldaos" target="_blank" rel="noopener noreferrer" class="btn-primary"><i class="fa-brands fa-github" aria-hidden="true"></i><span>Inspect the source</span></a>
+        <a href="../index.html#projects" class="btn-secondary"><span>← Back to all work</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="editorial-footer"><div class="container"><div class="footer-bottom-bar"><span>© <span id="footer-year">2026</span> Md Faijal Eaqbal.</span><a href="../index.html#home" class="back-to-top-trigger"><span>Back to portfolio</span><i class="fa-solid fa-arrow-up" aria-hidden="true"></i></a></div></div></footer>
+  <script>document.getElementById('footer-year').textContent = new Date().getFullYear();</script>
+</body>
+</html>
