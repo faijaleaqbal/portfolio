@@ -4,3 +4,4 @@ dist/
 *.local
 tsconfig.tsbuildinfo
 data/
+.git.broken-20260928/
