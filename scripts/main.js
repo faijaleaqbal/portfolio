@@ -671,10 +671,18 @@ function initArchitectureVisualizer() {
   }
 
   rows.forEach((row) => {
-    row.addEventListener('click', () => {
+    const activate = () => {
       const idx = parseInt(row.getAttribute('data-arch-layer'), 10);
       updateDetailView(idx);
       playSynthesizedClick(600);
+    };
+    row.addEventListener('click', activate);
+    /* Audit fix #1 (Major): rows are buttons — keyboard operable */
+    row.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        activate();
+      }
     });
 
     row.addEventListener('mouseenter', () => {

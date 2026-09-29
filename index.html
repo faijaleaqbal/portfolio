@@ -130,14 +130,12 @@
         </div>
       </div>
 
-      <!-- Primary Site Navigation -->
+      <!-- Primary Site Navigation: 6 top-level links (audit #14: was 8 + CTA) -->
       <nav class="site-nav" aria-label="Primary site navigation">
         <ul class="nav-menu" id="nav-menu">
           <li><a href="#home" class="nav-item-link active">Overview</a></li>
           <li><a href="#about" class="nav-item-link">About</a></li>
-          <li><a href="#scope" class="nav-item-link">Scope</a></li>
           <li><a href="#projects" class="nav-item-link">Work</a></li>
-          <li><a href="#architecture" class="nav-item-link">Architecture</a></li>
           <li><a href="#stack" class="nav-item-link">Stack</a></li>
           <li><a href="#chronology" class="nav-item-link">Journey</a></li>
           <li><a href="#contact" class="nav-item-link">Contact</a></li>
@@ -166,12 +164,12 @@
         <div class="hero-copy">
           <div class="hero-status-pill">
             <span class="status-pulse" aria-hidden="true"></span>
-            <span>Available for freelance &amp; engineering collaborations</span>
+            <span>Available for freelance work</span>
           </div>
 
           <h1 class="hero-title">
-            <span>I BUILD AI-POWERED PRODUCTS,</span>
-            <span class="title-accent">AUTOMATION SYSTEMS &amp; DEVELOPER INFRASTRUCTURE.</span>
+            <span>I build AI-powered products,</span>
+            <span class="title-accent">automation systems &amp; developer infrastructure.</span>
           </h1>
 
           <p class="hero-statement">
@@ -266,7 +264,8 @@
       </div>
 
       <a href="#about" class="scroll-indicator-cue" aria-label="Scroll down to About section">
-        <span>Scroll to Explore</span>
+        <span class="scroll-cue-dot" aria-hidden="true"></span>
+        <span>Scroll to explore</span>
         <i class="fa-solid fa-chevron-down" aria-hidden="true"></i>
       </a>
     </section>
@@ -486,11 +485,7 @@
                 <span>CI: lint · typecheck · build · guards</span>
               </div>
 
-              <div class="dossier-nav-tabs">
-                <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
-                <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
-                <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
-              </div>
+              <!-- tabs moved into dossier-toolbar below (audit #15) -->
 
               <div class="dossier-pane is-active" data-pane="overview">
                 <p class="dossier-problem-statement">
@@ -539,7 +534,14 @@
                 <span class="tech-tag">Vitest</span>
                 <span class="tech-tag">CI</span>
               </div>
-              <div class="dossier-actions-row">
+              <div class="dossier-toolbar" role="group" aria-label="Project interactions">
+                <span class="dossier-toolbar-label">Explore this project</span>
+                <div class="dossier-nav-tabs">
+                  <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
+                </div>
+                <div class="dossier-actions-row">
                 <a href="projects/maldaos.html" class="btn-primary" data-magnetic>
                   <span>Case Study</span>
                   <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
@@ -549,12 +551,13 @@
                   <span>GitHub</span>
                 </a>
               </div>
+              </div><!-- /dossier-toolbar -->
             </div>
 
             <!-- Visual: real product screenshots -->
             <div class="dossier-schematic" aria-label="MaldaOS product screenshots">
               <div class="schematic-top">
-                <span>PROOF // REAL PRODUCT SCREENS</span>
+                <span>Proof · Real product screens</span>
                 <span>VERIFIED REPO ASSET</span>
               </div>
               <div class="case-shots">
@@ -597,11 +600,7 @@
                 <span>PM2 · live 24/7</span>
               </div>
 
-              <div class="dossier-nav-tabs">
-                <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
-                <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
-                <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
-              </div>
+              <!-- tabs moved into dossier-toolbar below (audit #15) -->
 
               <div class="dossier-pane is-active" data-pane="overview">
                 <p class="dossier-problem-statement">
@@ -647,7 +646,14 @@
                 <span class="tech-tag">PM2</span>
                 <span class="tech-tag">Node --test</span>
               </div>
-              <div class="dossier-actions-row">
+              <div class="dossier-toolbar" role="group" aria-label="Project interactions">
+                <span class="dossier-toolbar-label">Explore this project</span>
+                <div class="dossier-nav-tabs">
+                  <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
+                </div>
+                <div class="dossier-actions-row">
                 <a href="projects/pixel-assistor.html" class="btn-primary" data-magnetic>
                   <span>Case Study</span>
                   <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
@@ -657,12 +663,13 @@
                   <span>GitHub</span>
                 </a>
               </div>
+              </div><!-- /dossier-toolbar -->
             </div>
 
             <!-- Visual Schematic Mockup -->
             <div class="dossier-schematic" aria-hidden="true">
               <div class="schematic-top">
-                <span>COMMAND ROUTER &amp; AUDIO MATRIX</span>
+                <span>Command router &amp; audio matrix</span>
                 <span>123 COMMANDS · 8 CATEGORIES</span>
               </div>
               <div class="schematic-diagram">
@@ -707,11 +714,7 @@
                 <span class="live-dot">Live demo</span>
               </div>
 
-              <div class="dossier-nav-tabs">
-                <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
-                <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
-                <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
-              </div>
+              <!-- tabs moved into dossier-toolbar below (audit #15) -->
 
               <div class="dossier-pane is-active" data-pane="overview">
                 <p class="dossier-problem-statement">
@@ -759,7 +762,14 @@
                 <span class="tech-tag">SSE</span>
                 <span class="tech-tag">Docker</span>
               </div>
-              <div class="dossier-actions-row">
+              <div class="dossier-toolbar" role="group" aria-label="Project interactions">
+                <span class="dossier-toolbar-label">Explore this project</span>
+                <div class="dossier-nav-tabs">
+                  <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
+                </div>
+                <div class="dossier-actions-row">
                 <a href="https://readstacks.duckdns.org" target="_blank" rel="noopener noreferrer" class="btn-primary" data-magnetic>
                   <span>Live Demo</span>
                   <i class="fa-solid fa-arrow-up-right-from-square" aria-hidden="true"></i>
@@ -773,12 +783,13 @@
                   <span>GitHub</span>
                 </a>
               </div>
+              </div><!-- /dossier-toolbar -->
             </div>
 
             <!-- Visual Schematic Mockup -->
             <div class="dossier-schematic" aria-hidden="true">
               <div class="schematic-top">
-                <span>SYSTEM ARCHITECTURE // RAG PIPELINE</span>
+                <span>System architecture · RAG pipeline</span>
                 <span>STATUS: 200 OK · LIVE</span>
               </div>
               <div class="schematic-diagram">
@@ -823,11 +834,7 @@
                 <span>FastAPI AI service</span>
               </div>
 
-              <div class="dossier-nav-tabs">
-                <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
-                <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
-                <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
-              </div>
+              <!-- tabs moved into dossier-toolbar below (audit #15) -->
 
               <div class="dossier-pane is-active" data-pane="overview">
                 <p class="dossier-problem-statement">
@@ -876,7 +883,14 @@
                 <span class="tech-tag">U2Net</span>
                 <span class="tech-tag">EasyOCR</span>
               </div>
-              <div class="dossier-actions-row">
+              <div class="dossier-toolbar" role="group" aria-label="Project interactions">
+                <span class="dossier-toolbar-label">Explore this project</span>
+                <div class="dossier-nav-tabs">
+                  <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
+                </div>
+                <div class="dossier-actions-row">
                 <a href="projects/picfix.html" class="btn-primary" data-magnetic>
                   <span>Case Study</span>
                   <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
@@ -886,12 +900,13 @@
                   <span>Source Code</span>
                 </a>
               </div>
+              </div><!-- /dossier-toolbar -->
             </div>
 
             <!-- Visual Schematic Mockup -->
             <div class="dossier-schematic" aria-hidden="true">
               <div class="schematic-top">
-                <span>IMAGE &amp; PDF PIPELINE // 59 PAGES</span>
+                <span>Image &amp; PDF pipeline · 59 pages</span>
                 <span>12 API GROUPS</span>
               </div>
               <div class="schematic-diagram">
@@ -936,11 +951,7 @@
                 <span class="live-dot">Live on Telegram</span>
               </div>
 
-              <div class="dossier-nav-tabs">
-                <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
-                <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
-                <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
-              </div>
+              <!-- tabs moved into dossier-toolbar below (audit #15) -->
 
               <div class="dossier-pane is-active" data-pane="overview">
                 <p class="dossier-problem-statement">
@@ -988,7 +999,14 @@
                 <span class="tech-tag">MS Graph</span>
                 <span class="tech-tag">Docker</span>
               </div>
-              <div class="dossier-actions-row">
+              <div class="dossier-toolbar" role="group" aria-label="Project interactions">
+                <span class="dossier-toolbar-label">Explore this project</span>
+                <div class="dossier-nav-tabs">
+                  <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
+                </div>
+                <div class="dossier-actions-row">
                 <a href="https://t.me/Alya_Rasa_Bot" target="_blank" rel="noopener noreferrer" class="btn-primary" data-magnetic>
                   <i class="fa-brands fa-telegram" aria-hidden="true"></i>
                   <span>Try Live on Telegram</span>
@@ -1002,12 +1020,13 @@
                   <span>GitHub</span>
                 </a>
               </div>
+              </div><!-- /dossier-toolbar -->
             </div>
 
             <!-- Visual Schematic Mockup -->
             <div class="dossier-schematic" aria-hidden="true">
               <div class="schematic-top">
-                <span>CONVERSATIONAL AGENT ENGINE</span>
+                <span>Conversational agent engine</span>
                 <span>MCP PIPELINE ACTIVE</span>
               </div>
               <div class="schematic-diagram">
@@ -1052,11 +1071,7 @@
                 <span>Dark/Light themes</span>
               </div>
 
-              <div class="dossier-nav-tabs">
-                <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
-                <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
-                <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
-              </div>
+              <!-- tabs moved into dossier-toolbar below (audit #15) -->
 
               <div class="dossier-pane is-active" data-pane="overview">
                 <p class="dossier-problem-statement">
@@ -1100,7 +1115,14 @@
                 <span class="tech-tag">Nginx</span>
                 <span class="tech-tag">Docker</span>
               </div>
-              <div class="dossier-actions-row">
+              <div class="dossier-toolbar" role="group" aria-label="Project interactions">
+                <span class="dossier-toolbar-label">Explore this project</span>
+                <div class="dossier-nav-tabs">
+                  <button type="button" class="dossier-tab-btn is-active" data-tab="overview">01 // Problem &amp; Overview</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="specs">02 // Architecture Specs</button>
+                  <button type="button" class="dossier-tab-btn" data-tab="decisions">03 // Engineering Decisions</button>
+                </div>
+                <div class="dossier-actions-row">
                 <a href="projects/malda-portal.html" class="btn-primary" data-magnetic>
                   <span>Case Study</span>
                   <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>
@@ -1110,12 +1132,13 @@
                   <span>GitHub</span>
                 </a>
               </div>
+              </div><!-- /dossier-toolbar -->
             </div>
 
             <!-- Visual Schematic Mockup -->
             <div class="dossier-schematic" aria-hidden="true">
               <div class="schematic-top">
-                <span>INFORMATION ARCHITECTURE</span>
+                <span>Information architecture</span>
                 <span>62 PAGES</span>
               </div>
               <div class="schematic-diagram">
@@ -1187,7 +1210,7 @@
             </div>
             <div class="arch-row-right">
               <span class="arch-row-status"><i class="fa-solid fa-circle-check"></i> 200 OK</span>
-            </div>
+            <span class="arch-row-expand"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inspect</span></div>
           </div>
 
           <div class="arch-interactive-row" data-arch-layer="1" tabindex="0" role="button" aria-label="Inspect Reverse Proxy">
@@ -1198,7 +1221,7 @@
             </div>
             <div class="arch-row-right">
               <span class="arch-row-status"><i class="fa-solid fa-lock"></i> TLS 1.3</span>
-            </div>
+            <span class="arch-row-expand"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inspect</span></div>
           </div>
 
           <div class="arch-interactive-row" data-arch-layer="2" tabindex="0" role="button" aria-label="Inspect API Gateway">
@@ -1209,7 +1232,7 @@
             </div>
             <div class="arch-row-right">
               <span class="arch-row-status"><i class="fa-solid fa-route"></i> ROUTED</span>
-            </div>
+            <span class="arch-row-expand"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inspect</span></div>
           </div>
 
           <div class="arch-interactive-row" data-arch-layer="3" tabindex="0" role="button" aria-label="Inspect Worker Engines">
@@ -1220,7 +1243,7 @@
             </div>
             <div class="arch-row-right">
               <span class="arch-row-status"><i class="fa-solid fa-gears"></i> ACTIVE</span>
-            </div>
+            <span class="arch-row-expand"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inspect</span></div>
           </div>
 
           <div class="arch-interactive-row" data-arch-layer="4" tabindex="0" role="button" aria-label="Inspect Persistence Tier">
@@ -1231,7 +1254,7 @@
             </div>
             <div class="arch-row-right">
               <span class="arch-row-status"><i class="fa-solid fa-database"></i> SYNCED</span>
-            </div>
+            <span class="arch-row-expand"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inspect</span></div>
           </div>
 
           <div class="arch-interactive-row" data-arch-layer="5" tabindex="0" role="button" aria-label="Inspect Local AI Engine">
@@ -1242,7 +1265,7 @@
             </div>
             <div class="arch-row-right">
               <span class="arch-row-status"><i class="fa-solid fa-microchip"></i> 0% COST</span>
-            </div>
+            <span class="arch-row-expand"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inspect</span></div>
           </div>
 
           <div class="arch-interactive-row" data-arch-layer="6" tabindex="0" role="button" aria-label="Inspect Bare Metal Host">
@@ -1253,7 +1276,7 @@
             </div>
             <div class="arch-row-right">
               <span class="arch-row-status"><i class="fa-solid fa-server"></i> DAEMON</span>
-            </div>
+            <span class="arch-row-expand"><i class="fa-solid fa-plus" aria-hidden="true"></i> Inspect</span></div>
           </div>
         </div>
 
@@ -1271,8 +1294,8 @@
               <!-- Dynamically populated by main.js -->
             </div>
 
-            <h5 style="font-size:0.88rem;color:var(--ink-primary);margin-bottom:0.75rem;text-transform:uppercase;letter-spacing:0.06em;font-family:var(--font-mono);">
-              <i class="fa-solid fa-shield-halved" style="color:var(--acc-cyan);margin-right:0.4rem;"></i>
+            <h5 class="arch-decisions-heading">
+              <i class="fa-solid fa-shield-halved" aria-hidden="true"></i>
               Architecture &amp; Engineering Decisions
             </h5>
             <ul class="arch-decisions-list" id="arch-detail-decisions">
@@ -1444,7 +1467,12 @@
           <div class="proof-card">
             <span class="proof-num">Live</span>
             <span class="proof-title">Verify Right Now</span>
-            <p class="proof-detail"><a href="https://readstacks.duckdns.org" target="_blank" rel="noopener noreferrer">Readstacks demo</a> · <a href="https://t.me/Alya_Rasa_Bot" target="_blank" rel="noopener noreferrer">Alya on Telegram</a> · bots online via PM2.</p>
+            <p class="proof-detail">Bots online via PM2.</p>
+            <div class="proof-related-links" aria-label="Related live demos">
+              <span class="proof-related-label">Related links</span>
+              <a href="https://readstacks.duckdns.org" target="_blank" rel="noopener noreferrer">Readstacks demo</a>
+              <a href="https://t.me/Alya_Rasa_Bot" target="_blank" rel="noopener noreferrer">Alya on Telegram</a>
+            </div>
           </div>
           <p class="metrics-footnote">*Excludes suites needing live credentials (MaldaOS runtime tests need local Supabase; Pixel live-smoke needs a bot token). Alya: 494 test functions across its suite.</p>
         </aside>
