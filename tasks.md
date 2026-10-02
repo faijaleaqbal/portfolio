@@ -42,3 +42,13 @@
 - [x] Add strict `response.status === 200` verification before showing success message UI
 - [x] Add detailed `console.log('EmailJS API Success Response:', response)` for browser console inspection
 - [x] Verified live credentials via direct REST API test (`PUBLIC_KEY: p2UVxEuk_yVgYO1cH`, `SERVICE_ID: service_yspxjnt`, `TEMPLATE_ID: template_anlv48o`)
+
+## Phase 8: Performance & Scroll Lag Elimination
+- [x] Eliminate CPU rasterization bottlenecks by replacing SVG `feTurbulence` with GPU-accelerated micro-dither pattern in `styles/main.css`
+- [x] Cap Three.js renderer DPR at 1.25 in `scripts/3d-world.js` to reduce GPU pixel fill rate by ~50%
+- [x] Restrict 3D raycasting in `scripts/3d-world.js` to active pointer movements within the Architecture section
+- [x] Optimize `scripts/liquid-button.js` WebGL2 buttons: reduce idle frame rate from 30 Hz to 8 Hz and pause rendering during active scrolling
+- [x] Enable `gsap.ticker.lagSmoothing(500, 33)` in `scripts/main.js` to absorb frame delta spikes smoothly
+- [x] Cache scroll bounds in both `scripts/main.js` and `scripts/3d-world.js` to eliminate layout thrashing
+- [x] Cache card bounding client rects on `mouseenter` during 3D hover tilt in `scripts/main.js`
+

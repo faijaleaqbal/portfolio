@@ -181,14 +181,18 @@ ul, ol {
   display: block;
 }
 
-/* Film Grain Texture */
+/* Film Grain Texture (GPU Optimized Micro-Dither) */
 .grain-overlay {
   position: fixed;
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  opacity: 0.038;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  opacity: 0.035;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.16) 1px, transparent 1px);
+  background-size: 4px 4px;
+  transform: translateZ(0);
+  will-change: transform;
+  contain: strict;
 }
 
 /* Radial Vignette */
@@ -198,6 +202,9 @@ ul, ol {
   z-index: 3;
   pointer-events: none;
   background: radial-gradient(circle at 50% 45%, transparent 45%, rgba(4, 5, 8, 0.75) 100%);
+  transform: translateZ(0);
+  will-change: transform;
+  contain: strict;
 }
 
 /* Top Progress Hairline */

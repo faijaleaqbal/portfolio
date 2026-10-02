@@ -283,7 +283,7 @@
       return;
     }
 
-    const dpr = isMobile ? 1.0 : Math.min(window.devicePixelRatio || 1, 1.75);
+    const dpr = isMobile ? 1.0 : Math.min(window.devicePixelRatio || 1, 1.25);
     renderer.setPixelRatio(dpr);
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
@@ -1188,16 +1188,29 @@
   /* --------------------------------------------------------------------------
      14. INTERACTION: RAYCASTING & ARCHITECTURE INSPECTION
      -------------------------------------------------------------------------- */
+  let needsRaycast = false;
   function onPointerMove(e) {
     mouse.targetX = (e.clientX / window.innerWidth) * 2 - 1;
     mouse.targetY = -(e.clientY / window.innerHeight) * 2 + 1;
 
     mouseVec.x = mouse.targetX;
     mouseVec.y = mouse.targetY;
+    needsRaycast = true;
   }
 
   function handleRaycasting() {
-    if (isMobile) return;
+    if (isMobile || !needsRaycast) return;
+    needsRaycast = false;
+
+    // Only raycast when camera/scroll is near the Architecture Visualizer region (approx 0.70 - 0.98)
+    if (scrollProgress < 0.70 || scrollProgress > 0.98) {
+      if (hoveredArchIndex !== -1 && activeArchIndex === -1) {
+        hoveredArchIndex = -1;
+        canvas.style.cursor = 'default';
+        resetArchitectureHighlights();
+      }
+      return;
+    }
 
     raycaster.setFromCamera(mouseVec, camera);
     const intersects = raycaster.intersectObjects(archLayerMeshes);
@@ -1261,11 +1274,13 @@
   /* --------------------------------------------------------------------------
      15. SCROLL SYNCHRONIZATION
      -------------------------------------------------------------------------- */
+  let cachedScrollMax = 1;
+  function updateScrollBounds() {
+    cachedScrollMax = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  }
+
   function onScroll() {
-    const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
-    if (totalHeight > 0) {
-      targetScroll = Math.max(0, Math.min(1, window.scrollY / totalHeight));
-    }
+    targetScroll = Math.max(0, Math.min(1, window.scrollY / cachedScrollMax));
   }
 
   function onWindowResize() {
@@ -1273,10 +1288,12 @@
     const h = window.innerHeight;
     isMobile = w <= 768;
 
+    updateScrollBounds();
+
     camera.aspect = w / h;
     camera.updateProjectionMatrix();
 
-    const dpr = isMobile ? 1.0 : Math.min(window.devicePixelRatio || 1, 1.75);
+    const dpr = isMobile ? 1.0 : Math.min(window.devicePixelRatio || 1, 1.25);
     renderer.setPixelRatio(dpr);
     renderer.setSize(w, h);
   }
@@ -1299,8 +1316,10 @@
       });
     }
 
+    updateScrollBounds();
     window.addEventListener('scroll', onScroll, { passive: true });
     window.addEventListener('resize', onWindowResize, { passive: true });
+    window.addEventListener('load', updateScrollBounds, { passive: true });
     document.addEventListener('visibilitychange', onVisibilityChange);
 
     onScroll();

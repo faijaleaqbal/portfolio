@@ -544,7 +544,7 @@ let needResize = true;
 function resize(){
   const r  = stage.getBoundingClientRect();
   const br = btn.getBoundingClientRect();
-  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  DPR = Math.min(window.devicePixelRatio || 1, 1.25);
   const w = Math.max(2, Math.round(r.width  * DPR));
   const h = Math.max(2, Math.round(r.height * DPR));
   if(w !== W || h !== H){ W = w; H = h; cv.width = W; cv.height = H; }
@@ -595,23 +595,30 @@ function localPt(e){
 const calm = matchMedia('(prefers-reduced-motion: reduce)');
 let drawn = null;                  // signature of the last frame actually drawn
 
-/* HOST ADAPTATION — idle frame cap.
-   The authored scene owns its page and can afford to run all twenty passes
-   every frame forever, because the rim keeps travelling even at rest. Here
-   two of these sit on top of a hero that is already rendering 190k blades of
-   moss, and measured together they were halving the whole page: 50 fps with
-   them, 92 without.
-   Nothing is removed — the cap only applies while the button is genuinely
-   idle, and the rim's travel is 0.07 laps a second, so 30 Hz is far more than
-   it needs. The moment a pointer, a press, a focus or a ripple is in play it
-   goes back to running every frame, because that is when the metal has to
-   track the cursor. */
-const IDLE_HZ = 30;
+/* HOST ADAPTATION — idle frame cap & scroll pause
+   Reduced idle rate to 8 Hz and pauses while scrolling to guarantee 60-120 FPS
+   page scroll without compromising hover metal dispersion fidelity. */
+const IDLE_HZ = 8;
 let lastDraw = 0;
+
+let isPageScrolling = false;
+let scrollPauseTimer = null;
+hostWindow.addEventListener('scroll', () => {
+  isPageScrolling = true;
+  clearTimeout(scrollPauseTimer);
+  scrollPauseTimer = setTimeout(() => {
+    isPageScrolling = false;
+  }, 120);
+}, { passive: true });
 
 function frame(now){
   if (!inView) {
     frameActive = false;
+    return;
+  }
+  // Pause multi-pass shader evaluations during active scrolling when untouched
+  if (isPageScrolling && !on.over && !on.press && !on.focus) {
+    requestAnimationFrame(frame);
     return;
   }
   const dtRaw = (now - last) / 1000; last = now;

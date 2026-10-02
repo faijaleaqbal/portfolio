@@ -71,7 +71,7 @@ function initLenisAndGSAP() {
       gsap.ticker.add((time) => {
         lenisInstance.raf(time * 1000);
       });
-      gsap.ticker.lagSmoothing(0);
+      gsap.ticker.lagSmoothing(500, 33);
     } else {
       function raf(time) {
         lenisInstance.raf(time);
@@ -117,18 +117,27 @@ function initCustomCursor() {
 
   let mouseX = -100, mouseY = -100;
   let ringX = -100, ringY = -100;
+  let cursorNeedsUpdate = false;
 
   window.addEventListener('pointermove', (e) => {
     mouseX = e.clientX;
     mouseY = e.clientY;
-    dot.style.transform = `translate(${mouseX}px, ${mouseY}px)`;
+    dot.style.transform = `translate3d(${mouseX}px, ${mouseY}px, 0)`;
+    cursorNeedsUpdate = true;
   }, { passive: true });
 
-  // Smooth lerp loop for the trailing precision ring
+  // Smooth lerp loop for the trailing precision ring (only updates DOM when moving)
   function renderCursor() {
-    ringX += (mouseX - ringX) * 0.18;
-    ringY += (mouseY - ringY) * 0.18;
-    ring.style.transform = `translate(${ringX}px, ${ringY}px)`;
+    if (cursorNeedsUpdate) {
+      const dx = mouseX - ringX;
+      const dy = mouseY - ringY;
+      ringX += dx * 0.18;
+      ringY += dy * 0.18;
+      ring.style.transform = `translate3d(${ringX}px, ${ringY}px, 0)`;
+      if (Math.abs(dx) < 0.1 && Math.abs(dy) < 0.1) {
+        cursorNeedsUpdate = false;
+      }
+    }
     requestAnimationFrame(renderCursor);
   }
   requestAnimationFrame(renderCursor);
@@ -161,16 +170,27 @@ function initNavigation() {
   const header = document.getElementById('site-header');
   const progressBar = document.getElementById('scroll-progress-bar');
 
+  // Cached scroll bounds to prevent layout thrashing
+  let maxScroll = 1;
+  function updateScrollBounds() {
+    maxScroll = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
+  }
+  window.addEventListener('resize', updateScrollBounds, { passive: true });
+  window.addEventListener('load', updateScrollBounds, { passive: true });
+  updateScrollBounds();
+
   // Scroll listener for header blur & progress bar
   window.addEventListener('scroll', () => {
     const scrollY = window.scrollY;
     if (header) {
-      header.classList.toggle('scrolled', scrollY > 24);
+      const shouldBeScrolled = scrollY > 24;
+      if (header.classList.contains('scrolled') !== shouldBeScrolled) {
+        header.classList.toggle('scrolled', shouldBeScrolled);
+      }
     }
 
     if (progressBar) {
-      const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
-      const pct = maxScroll > 0 ? (scrollY / maxScroll) * 100 : 0;
+      const pct = (scrollY / maxScroll) * 100;
       progressBar.style.width = `${pct}%`;
     }
   }, { passive: true });
@@ -289,13 +309,17 @@ function initMotionChoreography() {
     revealObserver.observe(el);
   });
 
-  // Subtle 3D Card Hover Tilt (Desktop Only)
+  // Subtle 3D Card Hover Tilt (Desktop Only) with cached bounding rects
   const isFinePointer = window.matchMedia('(pointer: fine)').matches;
   if (isFinePointer && typeof gsap !== 'undefined') {
     const tiltCards = document.querySelectorAll('.hero-dossier-card, .project-dossier');
     tiltCards.forEach((card) => {
+      let rect = null;
+      card.addEventListener('mouseenter', () => {
+        rect = card.getBoundingClientRect();
+      });
       card.addEventListener('mousemove', (e) => {
-        const rect = card.getBoundingClientRect();
+        if (!rect) rect = card.getBoundingClientRect();
         const x = (e.clientX - rect.left) / rect.width - 0.5;
         const y = (e.clientY - rect.top) / rect.height - 0.5;
         gsap.to(card, {
@@ -303,13 +327,18 @@ function initMotionChoreography() {
           rotationX: -y * 5,
           duration: 0.4,
           ease: 'power1.out',
-          transformPerspective: 1000
+          transformPerspective: 1000,
+          overwrite: 'auto'
         });
       });
       card.addEventListener('mouseleave', () => {
+        rect = null;
         gsap.to(card, {
           rotationX: 0,
           rotationY: 0,
+          duration: 0.5,
+          ease: 'power2.out',
+          overwrite: 'auto'
         });
       });
     });
