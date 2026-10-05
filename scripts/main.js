@@ -542,28 +542,28 @@ const ARCH_LAYERS_DATA = [
   {
     tier: '01 // CLIENT TIER',
     headline: 'Telegram Mini App, Web & Discord Clients',
-    desc: 'Edge consumer interfaces engineered for sub-50ms interaction response. Implements TON Connect 2.0 cryptographic wallet handshakes, mobile touch ergonomics, and resilient WebSocket reconnect loops.',
+    desc: 'Consumer-facing clients: TON Connect 2.0 cryptographic wallet handshakes, mobile touch ergonomics, and resilient WebSocket reconnect loops.',
     metrics: [
-      { label: 'ROUNDTRIP LATENCY', value: '< 45ms' },
+      { label: 'INTERFACES', value: 'TMA · Web · Discord' },
       { label: 'TRANSPORT', value: 'WSS / HTTPS' },
-      { label: 'BUNDLE FOOTPRINT', value: '< 180KB' },
+      { label: 'RUNTIME', value: 'Zero-framework JS' },
       { label: 'CLIENT ISOLATION', value: 'JWT / Session' }
     ],
     decisions: [
       'Custom TON provider abstraction prevents third-party wallet spoofing.',
-      'Lightweight Vanilla JS and strict asset minimization keeps initial paint under 350ms.',
+      'Vanilla JS and strict asset minimization keep the initial payload small for fast first paint on low-end devices.',
       'Idempotency tokens prevent duplicate state transitions during mobile network swaps.'
     ]
   },
   {
     tier: '02 // REVERSE PROXY & EDGE',
-    headline: 'Nginx Reverse Proxy, Let\'s Encrypt SSL & DDoS Filter',
+    headline: 'Nginx Reverse Proxy, Let\'s Encrypt SSL & Rate Limiting',
     desc: 'Front-line entry bastion terminating TLS 1.3 across all subdomains (faijaleaqbal, readstacks, blitzgamezone, maldacollege). Features rate limiting buffers, security headers, and static caching.',
     metrics: [
       { label: 'SSL PROTOCOL', value: 'TLS 1.3 Strict' },
       { label: 'BUFFER CAPACITY', value: '256KB Upstream' },
       { label: 'MAX REQ SIZE', value: '50MB Streaming' },
-      { label: 'UPTIME SLA', value: '99.98%' }
+      { label: 'CERT RENEWAL', value: 'Certbot Automated' }
     ],
     decisions: [
       'Configured dedicated proxy buffer sizes to eliminate HTTP 502 bad gateway spikes from oversized OAuth tokens.',
@@ -576,7 +576,7 @@ const ARCH_LAYERS_DATA = [
     headline: 'Express.js, FastAPI & Async Dispatchers',
     desc: 'Central routing and event arbitration bus. Ingests webhook callbacks from Telegram and Discord gateways, parses REST commands, and enforces role-based access control.',
     metrics: [
-      { label: 'EVENT ROUTING', value: '158 Slash Cmds' },
+      { label: 'EVENT ROUTING', value: '123 Discord + 40 Skills' },
       { label: 'CONCURRENCY', value: 'Asyncio Non-Block' },
       { label: 'AUTH ENGINE', value: 'JWT + Hash Verification' },
       { label: 'MIDDLEWARE', value: 'CORS + Rate Limit' }
@@ -638,7 +638,7 @@ const ARCH_LAYERS_DATA = [
   {
     tier: '07 // HOST INFRASTRUCTURE & LINUX CORE',
     headline: 'Ubuntu Cloud Host, PM2 & Systemd Services',
-    desc: 'Underlying cloud Linux environment hosting all microservices, bots, reverse proxies, and local AI runtimes with 24/7 autonomous recovery and telemetry monitoring.',
+    desc: 'Underlying cloud Linux environment hosting all microservices, bots, reverse proxies, and local AI runtimes, with PM2 watchdog restarts and systemd units for autonomous recovery.',
     metrics: [
       { label: 'OS ENVIRONMENT', value: 'Ubuntu Linux LTS' },
       { label: 'PROCESS CONTROL', value: 'PM2 + Systemd' },

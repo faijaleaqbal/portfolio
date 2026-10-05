@@ -5,3 +5,4 @@ dist/
 tsconfig.tsbuildinfo
 data/
 .git.broken-20260928/
+.mimosa/
